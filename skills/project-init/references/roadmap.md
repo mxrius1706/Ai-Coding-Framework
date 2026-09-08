@@ -6,7 +6,7 @@ It starts as the setup process and grows into the build plan. Those are the same
 
 ## Shipped filled in
 
-The framework ships the roadmap at `templates/roadmap.md`, already carrying the steps, the skill that performs each one and the rules below. Copy it in during phase 0 and adjust only what is project-specific. Composing it fresh each time invites variation where there is no reason for any.
+The framework ships the roadmap at `templates/roadmap.md`, next to the `project-init` skill, already carrying the steps, the skill that performs each one and the rules below. Copy it in during phase 0 and adjust only what is project-specific. Composing it fresh each time invites variation where there is no reason for any.
 
 It is copied in **before the product definition exists**, so a project's very first session already knows what the path looks like.
 

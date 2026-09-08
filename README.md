@@ -31,7 +31,7 @@ Der Ausgangspunkt ist eine Beobachtung. Ein Agent, der bei jeder Sitzung bei nul
 | `skill-creator` | Skills bauen, verbessern und ihre Trefferquote messen |
 | `claude-statusbar` | Die Statuszeile im Terminal einrichten und steuern. Optional, wird bei `project-init` angeboten |
 
-Zwei Dateien tragen über Sitzungsgrenzen. Der **Fahrplan** `roadmap.md` in der Wissensbasis beantwortet, wo das Projekt steht und was als Nächstes kommt; er wird gleich zu Beginn aus `templates/roadmap.md` kopiert, bereits mit dem Ablauf ausgefüllt, und wächst später um die Bauphasen, die `plan-build` aus den fertigen Specs ableitet. Ab dann ist er zu groß für jede Sitzung, deshalb injiziert der Hook nur noch den Kopf und den Abschnitt, auf den die Zeile `Aktuelle Bauphase` zeigt. `.claude/state.md` im Repo trägt die Übergabe der letzten Sitzung. Dazu zwei Hooks in `hooks/`: `session-state.py` injiziert Fahrplan und Übergabe bei Sitzungsstart und lässt die Sitzung mit dem nächsten Schritt eröffnen, `session-recap-trigger.py` erzwingt sie bei Abschiedsformeln.
+Zwei Dateien tragen über Sitzungsgrenzen. Der **Fahrplan** `roadmap.md` in der Wissensbasis beantwortet, wo das Projekt steht und was als Nächstes kommt; er wird gleich zu Beginn aus der mitgelieferten Vorlage kopiert, bereits mit dem Ablauf ausgefüllt, und wächst später um die Bauphasen, die `plan-build` aus den fertigen Specs ableitet. Ab dann ist er zu groß für jede Sitzung, deshalb injiziert der Hook nur noch den Kopf und den Abschnitt, auf den die Zeile `Aktuelle Bauphase` zeigt. `.claude/state.md` im Repo trägt die Übergabe der letzten Sitzung. Dazu zwei Hooks, die `project-init` mit installiert: `session-state.py` injiziert Fahrplan und Übergabe bei Sitzungsstart und lässt die Sitzung mit dem nächsten Schritt eröffnen, `session-recap-trigger.py` erzwingt sie bei Abschiedsformeln.
 
 Der Kreislauf ist geschlossen: von der Idee über die Specs und die Bauphasen zurück in die Konfiguration, die dabei gegen den gebauten Code korrigiert wird. Was noch fehlt, sagt die Tabelle am Ende von [LOOP.md](LOOP.md).
 
@@ -43,16 +43,33 @@ Der Kreislauf ist geschlossen: von der Idee über die Specs und die Bauphasen zu
 
 ## Installation
 
-Global, für alle Projekte:
+Alles liegt in `skills/`. Es dorthin zu kopieren, wo Claude Code nachschaut, ist die ganze Installation.
+
+**macOS und Linux:**
 
 ```bash
 git clone https://github.com/mxrius1706/Ai-Coding-Framework.git
 cp -r Ai-Coding-Framework/skills/* ~/.claude/skills/
 ```
 
-Oder projektlokal, dann nach `.claude/skills/` statt `~/.claude/skills/`.
+**Windows, PowerShell:**
 
-Prüfen, ob es angekommen ist: in Claude Code `/project-init` tippen. Erscheint der Skill nicht, hilft ein Neustart der Sitzung.
+```powershell
+git clone https://github.com/mxrius1706/Ai-Coding-Framework.git
+Copy-Item -Recurse -Force Ai-Coding-Framework\skills\* $HOME\.claude\skills\
+```
+
+Damit gilt es in jedem Projekt. Soll es nur für eines gelten, geht es nach `.claude/skills/` in dessen Ordner statt nach `~/.claude/skills/`.
+
+**Prüfen:** In Claude Code `/project-init` tippen. Erscheint der Skill nicht, Sitzung neu starten.
+
+**Aktualisieren:** Im geklonten Ordner `git pull`, dann dieselbe Kopierzeile noch einmal.
+
+**Entfernen:** Die kopierten Ordner aus `~/.claude/skills/` löschen. Welche das sind, steht in der Tabelle oben.
+
+Die beiden Hooks und die Fahrplan-Vorlage brauchen keinen eigenen Schritt. Sie liegen bei `project-init` und werden von ihm eingerichtet, wenn ein Projekt aufgesetzt wird — je Projekt, denn dort gehören sie hin.
+
+> **Was es kostet.** Claude Code legt bei jedem Sitzungsstart Name und Beschreibung aller Skills in den Kontext, damit es weiß, wann welcher dran ist. Diese Liste ist auf etwa 1 % des Kontextfensters gedeckelt, und darüber werden Beschreibungen abgeschnitten, ohne Warnung. Die 21 Skills hier belegen rund 2.700 Token. Wer schon viele eigene Skills hat, installiert besser nur die, die er wirklich braucht: `project-init`, `prd`, `grill-me` und `grilling` sind der kleinste sinnvolle Anfang.
 
 ## Loslegen
 

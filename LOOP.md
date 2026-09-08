@@ -311,7 +311,7 @@ Dieser Schritt schließt den Kreis. Ohne ihn ist alles davor eine Einbahnstraße
 
 ### 8. Zwei Fragen, zwei Dateien
 
-**Wo stehen wir und was kommt als Nächstes** beantwortet der **Fahrplan** (`roadmap.md`) in der Wissensbasis. Er wird in Phase 0 aus `templates/roadmap.md` kopiert, noch bevor das PRD existiert, und trägt den Ablauf dieses Baukastens bereits ausgefüllt: die Schritte, den Skill je Schritt, und die Regeln, die ihn ehrlich halten. Später wachsen die Bauphasen hinein, abgeleitet aus den fertigen Specs. Ein Dokument, zwei Lebensabschnitte eines Projekts, nicht zwei Dokumente.
+**Wo stehen wir und was kommt als Nächstes** beantwortet der **Fahrplan** (`roadmap.md`) in der Wissensbasis. Er wird in Phase 0 aus der Vorlage neben `project-init` kopiert, noch bevor das PRD existiert, und trägt den Ablauf dieses Baukastens bereits ausgefüllt: die Schritte, den Skill je Schritt, und die Regeln, die ihn ehrlich halten. Später wachsen die Bauphasen hinein, abgeleitet aus den fertigen Specs. Ein Dokument, zwei Lebensabschnitte eines Projekts, nicht zwei Dokumente.
 
 Gepflegt wird er von den Skills selbst: wer einen Schritt abschließt, trägt ihn ein. Und die Wurzel-`CLAUDE.md` nennt ihn ausdrücklich als **den** Ort für den Status, samt der Pflicht, ihn aktuell zu halten. Beides ist nötig. Ohne den Verweis schaut niemand hin, ohne die Pflicht wird er zum Tagebuch der ersten Woche.
 
@@ -365,7 +365,7 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | `skill-creator` | Skills bauen und messen | vorhanden |
 | `claude-statusbar` | Statuszeile im Terminal, optional in Phase 0 angeboten | vorhanden |
 | `config-sync` | Konfiguration gegen ihre vier Autoritäten prüfen und nachziehen | vorhanden |
-| Fahrplan als Statusquelle | `templates/roadmap.md`, vorbefüllt, in Phase 0 kopiert | vorhanden |
+| Fahrplan als Statusquelle | `skills/project-init/templates/roadmap.md`, vorbefüllt, in Phase 0 kopiert | vorhanden |
 | Übergabe + Hooks | `.claude/state.md`; Hook injiziert Fahrplan und Übergabe | vorhanden |
 | `session-recap` + Hook | Handoff am Sitzungsende, Abschiedsformeln als Auslöser | vorhanden |
 | `planning` | Plan je Phase, im Planungsmodus, vor dem Branch | vorhanden |

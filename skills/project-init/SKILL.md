@@ -70,7 +70,7 @@ A REST-based alternative exists that talks to a running Obsidian instance throug
 
 Keep it this shallow at the start. Depth earns its way in later. Invented hierarchy only makes things hard to find.
 
-**Copy the roadmap in immediately**, before the product definition exists. The framework ships it filled in at `templates/roadmap.md`: the steps, the skill that performs each one, and the rules that keep it honest. Copy it into the project's space in the knowledge base and adjust only what is project-specific, rather than composing it fresh each time.
+**Copy the roadmap in immediately**, before the product definition exists. The framework ships it filled in at `templates/roadmap.md`, next to this skill: the steps, the skill that performs each one, and the rules that keep it honest. Copy it into the project's space in the knowledge base and adjust only what is project-specific, rather than composing it fresh each time.
 
 It is the file that answers "where are we", and it answers it from the very first session rather than from the day someone remembers to create it. **Read `references/roadmap.md` for how it is meant to be used.**
 
