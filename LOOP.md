@@ -52,6 +52,8 @@ flowchart TD
     UI --> AD[artifact-design: Mockup]
     AD --> UI
     UI --> SP
+    SP --> SC[spec-consistency]
+    SC --> SP
     SP --> G[Bauabschnitt: Plan → Freigabe → Branch]
     G --> H[Bauen]
     H --> I[Hooks: Typen, Lint, Tests]
@@ -180,7 +182,21 @@ Zwei Regeln machen das Mockup brauchbar: es **übersetzt** den Vorschlag in die 
 
 Der wertvollste Fund in Phase 1 ist meist ein anderer: **Specs legen UI-Verhalten fest, ohne UI zu sagen.** Sätze wie „keine Vorauswahl bei einem Vorschlag" oder „der Abschlusstext ist Pflicht im selben Schritt wie der Statuswechsel" stehen dort, weil jemand über Korrektheit nachgedacht hat, und werden übersehen, weil sie nicht unter Oberfläche abgelegt sind.
 
-*(Noch nicht gebaut: die Konsistenzprüfung über den Graph und der Bau-Fahrplan aus den fertigen Specs.)*
+### Den Graph gegen sich selbst prüfen
+
+**Skill:** `spec-consistency`
+
+Findet die Klasse, die das Schreiben einer einzelnen Spec nicht fangen kann: **eine Entscheidung hat sich geändert, nachdem die Specs gegen sie geschrieben wurden.** Das fällt niemandem auf, weil nichts am Schreiben von Spec zwölf jemanden dazu bringt, Spec drei nochmal zu lesen.
+
+**Kein fester Takt, sondern Auslöser.** Eine geänderte Entscheidung, die bestehende Specs zitieren. Ein bewusst gebrochener Annahmebruch, dessen Gegenseite noch offen ist. Ein fertiges Cluster. Und vollständig vor jedem Phasenübergang, der die Specs als Ganzes liest, also vor der Seitenplanung und vor dem Ableiten der Bauphasen. Dazu eine Zahl als Netz, nicht als Mechanismus.
+
+Der Grund: Widersprüche entstehen durch Ändern, nicht durch Schreiben. Ein Lauf nach fünf Specs ohne Umentscheidung sucht eine Fehlerklasse, die es dort nicht gibt; ein Lauf fünf Specs nach einer geänderten Entscheidung findet den Fehler in sechs Dokumenten statt in einem.
+
+**Nicht jeder gegen jeden.** Ein Widerspruch zwischen zwei Specs ist ein Fakt, kein zweiter. Geprüft wird gegen die Invarianten für alle, und paarweise nur entlang der **erklärten** Kanten, jede Kante genau einmal. Gleiche Abdeckung, ein Bruchteil der Last.
+
+**Reiner Bericht, nie ein Fix.** Nachziehen läuft getrennt über `write-spec`, damit die Korrektur dieselben Prüfungen durchläuft wie das Original.
+
+*(Noch nicht gebaut: der Bau-Fahrplan aus den fertigen Specs.)*
 
 ---
 
@@ -282,7 +298,7 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | `write-spec` | Eine Komponente je Aufruf, gegen Code verifiziert | vorhanden |
 | `plan-pages` | Je Oberfläche eine Seitenübersicht mit Navigationsgraph | vorhanden |
 | `write-ui-spec` | Eine Seite je Aufruf, Mockup vor dem Dokument | vorhanden |
-| Spec-Konsistenz | Den Graph gegeneinander und gegen das PRD prüfen | **fehlt** |
+| `spec-consistency` | Den Graph gegeneinander und gegen die Produktwahrheit prüfen | vorhanden |
 | Bau-Fahrplan | Reihenfolge mit Gates aus den fertigen Specs ableiten | **fehlt** |
 | `grill-me` → `grilling` | Interview-Verfahren | vorhanden |
 | `project-init` | Konfiguration aufbauen | vorhanden |
