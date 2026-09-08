@@ -14,6 +14,7 @@ Der Ausgangspunkt ist eine Beobachtung. Ein Agent, der bei jeder Sitzung bei nul
 | `stack-decisions` | Technische Entscheidungen treffen und als Datensatz festhalten. Auch einzeln, wenn später etwas getauscht wird |
 | `design-system` | Visuelle Richtung, Tokens im Code, Begründungen im Vault, Beispielseite zur Freigabe |
 | `create-specs` | Das Produkt in Komponenten zerlegen und als verbundenen Spec-Graph anlegen |
+| `write-spec` | Eine Komponente spezifizieren, gegen den Code verifiziert, mit Ripple- und Reverse-Abgleich |
 | `grill-me` → `grilling` | Das Interview-Verfahren. Entscheidungsbaum in Runden, bis keine Verzweigung offen ist |
 | `project-init` | Der Einstiegspunkt. Wissensbasis, PRD, Stack, Bereiche und die CLAUDE.md-Schichten eines Projekts aufbauen |
 | `skill-creator` | Skills bauen, verbessern und ihre Trefferquote messen |

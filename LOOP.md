@@ -43,6 +43,9 @@ flowchart TD
     F --> CS[create-specs]
     CS --> C
     CS --> SP[(Spec-Graph im Vault)]
+    SP --> WS[write-spec]
+    WS --> C
+    WS --> SP
     SP --> G[Bauabschnitt: Plan → Freigabe → Branch]
     G --> H[Bauen]
     H --> I[Hooks: Typen, Lint, Tests]
@@ -128,7 +131,23 @@ Die Grenzen werden **gegrillt, nicht abgeleitet**. Wo zwei Komponenten dieselbe 
 
 Die Schreibreihenfolge folgt den Verweisen: zuerst, worauf alles zeigt, also in der Regel das Datenmodell, dann die Fachlogik, dann die Verträge, zuletzt die Oberfläche. Wer den Vertrag vor den Feldern schreibt, erfindet Felder.
 
-*(Noch nicht gebaut: das Schreiben der einzelnen Specs, die Seitenplanung und die UI-Specs, die Konsistenzprüfung über den Graph, und der Bau-Fahrplan aus den fertigen Specs.)*
+### Eine Komponente spezifizieren
+
+**Skill:** `write-spec`
+
+Ein Aufruf, ein Dokument, gegen den Code verifiziert statt aus dem Gedächtnis. Vier Prüfungen tragen ihn, und sie sind der eigentliche Wert:
+
+**Ist-Stand nur aus Code, strukturell enumeriert.** Nicht gezielt greppen, sondern die betroffenen Bäume auflisten. Der blinde Fleck ist nie „gesucht und nichts gefunden", sondern „nicht dran gedacht zu suchen".
+
+**Konsistenz-Check auf deklariert-gegen-erzwungen.** Ein Recht, das benutzt, aber nirgends definiert ist, oder umgekehrt tot herumliegt. Namens-Drift. Reste entfernter Features. Findet niemand, der nur fragt, was er neu baut.
+
+**Redundanz-Sweep.** Additionen fallen von selbst auf, Redundanz nicht. Also aktiv fragen, was der Umbau überflüssig, kaputt oder inkonsistent hinterlässt. Mit der Warnung, dass falsch als redundant abstempeln genauso schädlich ist wie übersehen.
+
+**Ripple vorwärts, Reverse-Abgleich rückwärts.** Wen berührt meine Änderung, und wer hat sich schon auf mich verlassen. Der zweite kommt aus einem Scan der eingehenden Links: Späte Komponenten werden referenziert, bevor sie existieren, also tragen die Referenzierenden Erwartungen. Die werden bestätigt oder bewusst gebrochen, nie stillschweigend unterlaufen.
+
+Dazu die Trennschärfe bei offenen Punkten: **jetzt-entscheidbar wird gegrillt, nur-von-anderen-beantwortbar bleibt TBD mit Angabe, wer antworten muss.** Grillen heißt Entscheidungen schärfen, nicht jemanden löchern, wo das Wissen fehlt.
+
+*(Noch nicht gebaut: die Seitenplanung und die UI-Specs, die Konsistenzprüfung über den Graph, und der Bau-Fahrplan aus den fertigen Specs.)*
 
 ---
 
@@ -219,7 +238,7 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | `stack-decisions` | Technische Entscheidungen treffen und festhalten | vorhanden |
 | `design-system` | Visuelle Richtung klären, Tokens schreiben, Beispielseite | vorhanden |
 | `create-specs` | Produkt in Komponenten zerlegen, Spec-Graph anlegen | vorhanden |
-| Specs schreiben | Eine Komponente je Aufruf, gegen Code verifiziert | **fehlt** |
+| `write-spec` | Eine Komponente je Aufruf, gegen Code verifiziert | vorhanden |
 | Seitenplanung + UI-Specs | Welche Seiten es gibt, dann je Seite eine Spec mit Mockup | **fehlt** |
 | Spec-Konsistenz | Den Graph gegeneinander und gegen das PRD prüfen | **fehlt** |
 | Bau-Fahrplan | Reihenfolge mit Gates aus den fertigen Specs ableiten | **fehlt** |
