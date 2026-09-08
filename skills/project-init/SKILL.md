@@ -216,6 +216,16 @@ Create one only when there is real content for it. An empty rule file is a promi
 
 Anything personal to one developer, such as a sandbox URL or preferred test data, belongs in `CLAUDE.local.md` at the project root, added to `.gitignore`. Keeping it out of the shared file prevents one person's setup from becoming everyone's instruction.
 
+### Two ways a written file fails silently
+
+Both of these produce a file that looks correct in an editor and does nothing.
+
+**A byte order mark before the frontmatter.** On Windows many editors and some write paths prepend a BOM. A file starting with those three bytes and then `---` no longer has frontmatter as far as the parser is concerned, so a rule's `paths:` never applies and a skill loses its name, description and every other field. Write these files without a BOM, and when editing an existing one, check whether it had one before you prepend anything.
+
+**A pointer to something that is not there.** Every path a generated file names, whether a vault note, a reference document, an MCP tool or a source file, is a claim that can be wrong the moment it is written and gets wronger as things move. Nothing validates it, and the failure is quiet: the session looks, finds nothing, and carries on with less than it should have.
+
+So verify each one as you write it. Read the directory the path points into rather than trusting the name. For an MCP tool, check that a tool by that exact name exists on the server that is actually running, not on the one the config was written for; two servers can carry the same configured name while only one is live, and their tool names differ. A pointer you could not confirm goes in as `TBD` with a note, never as a plausible guess.
+
 ### Two rules that hold across every generated file
 
 **One truth, one place.** No statement appears in two files. Where a second file needs it, it links. Two copies of a rule will disagree eventually, and then the work follows the wrong one. When a fact would fit in several places, put it in the most specific one and link from the others.

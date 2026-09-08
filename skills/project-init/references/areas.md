@@ -26,6 +26,10 @@ Two consequences worth internalizing:
 
 **Everything without `paths:` costs context in every session, forever.** A rule that matters for one directory but loads everywhere is pure overhead on every unrelated task.
 
+This has a consequence that catches people moving existing docs into `.claude/rules/`: a document that is **not** path-scoped is cheaper left where it is. A reference file sitting in `.claude/references/`, pointed at from the root file, loads only when something actually sends the session there. Move that same file into `rules/` without `paths:` and it now loads in every session, whether or not the work has anything to do with it. The migration made it more expensive, not less.
+
+So before moving anything into `rules/`, ask what it is scoped by. Scoped by path, it belongs there. Scoped by task type, by phase, or by nothing in particular, it stays a reference that something points at.
+
 **Imports do not save context.** `@path/to/file` in a `CLAUDE.md` is expanded at launch. It organizes files; it does not reduce what is loaded. Only `paths:` scoping and skills do that.
 
 **None of it is enforcement.** All four are context, and the model may not follow them. Anything that must happen without exception belongs in a hook, which runs as a script at a fixed point regardless of what the model decides.
@@ -39,6 +43,8 @@ Two consequences worth internalizing:
 **Path-scoped rule** when the same rule applies to files scattered across the tree, or when the project prefers all conventions collected in one place instead of spread through the directories. A rule scoped to `**/migrations/**` catches migrations wherever they live.
 
 **Skill** when it is a procedure rather than a convention. Conventions are things that are true while working somewhere ("handlers validate input at the boundary"). Procedures are things you do from time to time ("release a version", "add a new integration"). A multi-step procedure in a `CLAUDE.md` costs context in every session and is read in almost none of them.
+
+Skills are not free either, and the way they fail is worth knowing. Every skill's name and description sit in context permanently so the model can pick between them, and that listing has a budget of roughly one percent of the context window. Past it, descriptions get truncated. The skill still exists, it just stops being chosen reliably, and nothing reports this: a skill declared mandatory in a routing table can quietly never fire because the sentence that would have matched the request was cut off. So keep descriptions short and lead with the words a real request would contain, and treat a large pile of installed-but-unused skills as an active cost to the ones you do use, not merely as clutter.
 
 **Hook** when it must happen every time: a type check after an edit, a test run before a commit, a block on writes to a generated directory.
 
