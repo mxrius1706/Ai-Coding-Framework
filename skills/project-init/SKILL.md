@@ -96,6 +96,16 @@ What comes back is the set of settled decisions plus the ones left open as `TBD`
 
 ---
 
+## Phase 2b: Design system
+
+Skip this only when the project has no user interface at all. A library or a background service does not need one; anything with screens does, and defining it later means every screen built before it has to be revisited.
+
+Invoke the `design-system` skill. It runs after the stack because the token format depends on it, settles the visual direction, renders an example page to approve by, and writes the values into the codebase with the reasoning into the knowledge base.
+
+What comes back is a token file location, a named direction, and any open `TBD`. Phase 3 needs it: whether the interface deserves its own instructions, and what those instructions point at for values, is decided by whether this ran.
+
+---
+
 ## Phase 3: Area map
 
 Areas are not a matter of taste. They follow the structure the stack already has, so derive them from what phase 2 established. In a monorepo that usually means one per package; in a single tree, one per subsystem.

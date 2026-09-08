@@ -33,6 +33,11 @@ flowchart TD
     E -->|Phase 2| S[stack-decisions]
     S --> C
     S --> D
+    E -->|Phase 2b| DS[design-system]
+    S --> DS
+    DS --> C
+    DS --> D
+    DS --> TK[Token-Datei im Repo]
     E -->|Phase 3 bis 5| F[CLAUDE.md-Schichten im Repo]
 
     F --> G[Bauabschnitt: Plan → Freigabe → Branch]
@@ -88,13 +93,21 @@ Ohne dieses Interview wird ein PRD zu dem, was der `prd`-Skill selbst „aspirat
 
 Der Grund für die Trennung: Das PRD sagt nichts über die Technik und markiert einen unbestimmten Stack selbst als `TBD`. Regeln für einen Stack, den niemand gewählt hat, lesen sich wie richtige Regeln und werden befolgt. Nur bestätigte Technologie erzeugt technische Regeln, alles andere bleibt `TBD` mit dem Hinweis, was es klären würde.
 
+### Phase 2b: Design-System
+
+Nur wenn das Projekt eine Oberfläche hat. **`design-system`** läuft nach dem Stack, weil das Token-Format davon abhängt, klärt die visuelle Richtung, rendert eine Beispielseite zur Freigabe und schreibt danach zweigeteilt: **Werte in eine Token-Datei im Repo, Begründungen und Regeln in die Wissensbasis.**
+
+Die Zweiteilung ist der Punkt. Ein Farbwert an zwei Orten driftet, und wer dann das Dokument liest, baut das Falsche. Das Dokument trägt nur, was der Code nicht sagen kann: die benannte Richtung, die Prinzipien, die verworfenen Alternativen, und Verbote wie „die Markenfarbe nie als große Fläche".
+
+Freigegeben wird über die Beispielseite, nicht über eine Hex-Tabelle. Eine Palette auf dem Papier sagt nichts darüber, wie sie zusammen aussieht.
+
 ### Phasen 3 bis 5: Bereiche, Plan, Schreiben
 
 Bereichskarte aus dem Stack ableiten, Plan vorlegen, nach Freigabe schreiben.
 
 **Ergebnis:** Wurzel-`CLAUDE.md`, Bereichs-`CLAUDE.md` je Bereich, `.claude/rules/` mit `paths:`-Frontmatter, und die Wissensbasis-Tabelle, die auf den Vault zeigt.
 
-> **Einzeln aufrufbar bleibt alles trotzdem.** Wer nur ein PRD will, ruft `prd` direkt auf. Wer später eine Technologie tauscht, ruft `stack-decisions` direkt auf, ohne den ganzen Projektstart. `project-init` findet vorhandene Ergebnisse und setzt darauf auf, statt neu zu fragen.
+> **Einzeln aufrufbar bleibt alles trotzdem.** Wer nur ein PRD will, ruft `prd` direkt auf. Wer später eine Technologie tauscht, ruft `stack-decisions` direkt auf, wer ein Redesign macht `design-system`, jeweils ohne den ganzen Projektstart. `project-init` findet vorhandene Ergebnisse und setzt darauf auf, statt neu zu fragen.
 
 ---
 
@@ -183,6 +196,7 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 |---|---|---|
 | `prd` | Produkt spezifizieren | vorhanden |
 | `stack-decisions` | Technische Entscheidungen treffen und festhalten | vorhanden |
+| `design-system` | Visuelle Richtung klären, Tokens schreiben, Beispielseite | vorhanden |
 | `grill-me` → `grilling` | Interview-Verfahren | vorhanden |
 | `project-init` | Konfiguration aufbauen | vorhanden |
 | `skill-creator` | Skills bauen und messen | vorhanden |
