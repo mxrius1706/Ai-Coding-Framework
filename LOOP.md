@@ -40,7 +40,10 @@ flowchart TD
     DS --> TK[Token-Datei im Repo]
     E -->|Phase 3 bis 5| F[CLAUDE.md-Schichten im Repo]
 
-    F --> G[Bauabschnitt: Plan → Freigabe → Branch]
+    F --> CS[create-specs]
+    CS --> C
+    CS --> SP[(Spec-Graph im Vault)]
+    SP --> G[Bauabschnitt: Plan → Freigabe → Branch]
     G --> H[Bauen]
     H --> I[Hooks: Typen, Lint, Tests]
     I --> H
@@ -108,6 +111,24 @@ Bereichskarte aus dem Stack ableiten, Plan vorlegen, nach Freigabe schreiben.
 **Ergebnis:** Wurzel-`CLAUDE.md`, Bereichs-`CLAUDE.md` je Bereich, `.claude/rules/` mit `paths:`-Frontmatter, und die Wissensbasis-Tabelle, die auf den Vault zeigt.
 
 > **Einzeln aufrufbar bleibt alles trotzdem.** Wer nur ein PRD will, ruft `prd` direkt auf. Wer später eine Technologie tauscht, ruft `stack-decisions` direkt auf, wer ein Redesign macht `design-system`, jeweils ohne den ganzen Projektstart. `project-init` findet vorhandene Ergebnisse und setzt darauf auf, statt neu zu fragen.
+
+---
+
+## Danach: der Spec-Graph
+
+### Zerlegung in Komponenten
+
+**Skill:** `create-specs`
+
+Bricht das Produkt in seine Software-Komponenten auf und legt sie als **verbundenen Graph** an, nicht als Ordner voller Dateien. Ergebnis: ein Index mit jeder geplanten Komponente, ein Platzhalter je Komponente am endgültigen Pfad, und die Schreibreihenfolge aus den Abhängigkeiten.
+
+Der Schnitt ist die kleinere Hälfte. Was den Graph trägt, ist die Regel, dass **jede Komponente ausdrücklich sagt, was sie nicht abdeckt**, und wer stattdessen zuständig ist. Das ist „eine Wahrheit, ein Ort" als Dokumentstruktur. Ohne diesen Abschnitt spezifiziert jede Spec alles halb mit, und zwei Dokumente beschreiben dasselbe Feld unterschiedlich.
+
+Die Grenzen werden **gegrillt, nicht abgeleitet**. Wo zwei Komponenten dieselbe Sache besitzen könnten, gibt es keine allgemein richtige Antwort, und genau deshalb muss sie einmal entschieden und aufgeschrieben werden statt immer wieder anders.
+
+Die Schreibreihenfolge folgt den Verweisen: zuerst, worauf alles zeigt, also in der Regel das Datenmodell, dann die Fachlogik, dann die Verträge, zuletzt die Oberfläche. Wer den Vertrag vor den Feldern schreibt, erfindet Felder.
+
+*(Noch nicht gebaut: das Schreiben der einzelnen Specs, die Seitenplanung und die UI-Specs, die Konsistenzprüfung über den Graph, und der Bau-Fahrplan aus den fertigen Specs.)*
 
 ---
 
@@ -197,6 +218,11 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | `prd` | Produkt spezifizieren | vorhanden |
 | `stack-decisions` | Technische Entscheidungen treffen und festhalten | vorhanden |
 | `design-system` | Visuelle Richtung klären, Tokens schreiben, Beispielseite | vorhanden |
+| `create-specs` | Produkt in Komponenten zerlegen, Spec-Graph anlegen | vorhanden |
+| Specs schreiben | Eine Komponente je Aufruf, gegen Code verifiziert | **fehlt** |
+| Seitenplanung + UI-Specs | Welche Seiten es gibt, dann je Seite eine Spec mit Mockup | **fehlt** |
+| Spec-Konsistenz | Den Graph gegeneinander und gegen das PRD prüfen | **fehlt** |
+| Bau-Fahrplan | Reihenfolge mit Gates aus den fertigen Specs ableiten | **fehlt** |
 | `grill-me` → `grilling` | Interview-Verfahren | vorhanden |
 | `project-init` | Konfiguration aufbauen | vorhanden |
 | `skill-creator` | Skills bauen und messen | vorhanden |
