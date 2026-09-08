@@ -1,6 +1,6 @@
 ---
 name: project-init
-description: Set up the Claude Code configuration for a project from scratch - the Obsidian knowledge base, the PRD, and the full CLAUDE.md layer structure with area files and references. Use this whenever a user starts a new project, says the PRD is done and they want to set the project up, asks to initialize or scaffold their Claude config, wants CLAUDE.md files created, or is standing in an empty repository wondering how to begin. Also use it when a project already has code but no configuration layer worth the name. Do not confuse this with the built-in /init command, which only summarizes an existing codebase into a single file.
+description: Set up the Claude Code configuration for a project from scratch - the Obsidian knowledge base, the PRD, and the full instruction layer of root and area CLAUDE.md files, path-scoped rules and hooks. Use this whenever a user starts a new project, says the PRD is done and they want to set the project up, asks to initialize or scaffold their Claude config, wants CLAUDE.md files created, or is standing in an empty repository wondering how to begin. Also use it when a project already has code but no configuration layer worth the name. Do not confuse this with the built-in /init command, which only summarizes an existing codebase into a single file.
 ---
 
 # Project Init
@@ -109,13 +109,20 @@ Anything the user cannot answer stays `TBD` in the generated files, with a note 
 
 ## Phase 3: Area map
 
-Areas are not a matter of taste. They follow the structure the stack already has, so derive them from what phase 2 established.
+Areas are not a matter of taste. They follow the structure the stack already has, so derive them from what phase 2 established. In a monorepo that usually means one per package; in a single tree, one per subsystem.
 
-An area earns its own `CLAUDE.md` when work inside it follows rules that do not apply elsewhere. Data access rules do not help someone writing a UI component, and UI rules mean nothing in a migration. That difference is the test.
+**Read `references/areas.md` before deciding.** It carries the catalogue of areas worth considering, how each mechanism loads into context, and the rule for choosing between them.
 
-A typical web application lands on something like a UI area, a request-handling area and a data or schema area. A library or a CLI may need no areas at all, only a root file. Do not invent areas to fill out a template. Two good area files beat six thin ones.
+The test for every candidate: an area earns its own file when work inside it follows rules that do not apply elsewhere. Applied honestly this rules out most candidates in a small project, which is the correct outcome. A library or a CLI may need no areas at all, only a root file.
 
-For each area, decide what belongs in its `CLAUDE.md` (always in force while working there) and what belongs in a reference file under `.claude/references/` (detail pulled in only when a specific path is touched). The split is by scope, not by length. A rule that always applies in the area goes in the area file even if it is one line. A long procedure needed for one file only goes in a reference.
+Then decide the form for each. Four mechanisms exist and they differ in when they enter the context window, which is the entire basis for the choice:
+
+- **Area `CLAUDE.md`** for conventions belonging to a directory, versioned next to the code
+- **Path-scoped rule** in `.claude/rules/` with `paths:` frontmatter, for rules that apply to files scattered across the tree or when conventions are better kept in one place
+- **Skill** for a procedure done occasionally rather than a convention that is always in force
+- **Hook** for anything that must happen without exception
+
+That last distinction matters more than it looks. Instructions in any of the first three are context, not enforcement, and may not be followed. A hook runs as a script at a fixed point regardless of what the model decides.
 
 ---
 
@@ -132,6 +139,20 @@ Then wait for approval.
 ## Phase 5: Write
 
 Create the vault structure first, then the repository files.
+
+### Size is a hard constraint, not a preference
+
+Target **under 200 lines per `CLAUDE.md`**. These files load into the context window at the start of every session and compete with the actual work. Past that length adherence drops, and the failure is silent: the model does not announce that it stopped following rule 40, it just stops.
+
+The consequence is counterintuitive. A longer, more thorough configuration is a **worse** one, because the rules that matter get lost among the rules that do not. Being generous here actively harms the project.
+
+For every line, apply the test: **would removing this cause a mistake?** If not, cut it.
+
+What earns its place: commands that cannot be guessed, conventions that differ from the language or framework default, environment quirks, decisions specific to this project, non-obvious behaviour that has already bitten someone.
+
+What does not: anything derivable by reading the code, standard conventions the model already knows, file-by-file descriptions of the tree, dependency lists, API documentation that should be a link, and self-evident advice like "write clean code".
+
+Notes for human maintainers can go in block-level HTML comments. Those are stripped before the file reaches the context window, so they are free.
 
 ### Root CLAUDE.md
 
@@ -159,7 +180,7 @@ Sections in this order. Omit any that has nothing true to say, because an empty 
 
 **Knowledge base map.** A table from question type to vault location: product questions to the PRD, decisions to `specs/decisions/`, technical detail to the relevant spec. This table is what stops a later session from creating a local copy of something that already exists in the vault.
 
-**Routing tables.** Two of them, and the only place routing lives. See below.
+**Phrase routing.** One table mapping what the user says to the skill that should run. The only routing table in the project. See below.
 
 **Known weak spots.** Start empty, with a note that reviews fill it once a pattern has appeared twice. An empty section with a stated filling rule is honest. A pre-filled one is invention.
 
@@ -169,9 +190,31 @@ One per area from phase 3. Each opens with a single line on what the area covers
 
 Where an area has a mandatory sequence, such as a fixed order of steps in a request handler or a procedure for schema changes, write it as a numbered sequence or a code skeleton rather than prose. Sequences get followed when they look like sequences.
 
-### .claude/references/
+### .claude/rules/
 
-Detail documents, each pulled in by a path rule in the root routing table. Create one only when there is real content for it. An empty reference file is a promise that will not be kept.
+Detail that applies to some paths but not others goes here, one topic per file, with `paths:` frontmatter naming the globs it covers:
+
+```markdown
+---
+paths:
+  - "src/api/**/*.ts"
+---
+
+# API rules
+
+- Validate at the boundary before anything reaches the database
+- Errors use the shared response shape
+```
+
+The frontmatter is what makes this worth doing. A rule with `paths:` enters the context window only when a matching file is touched. A rule without it loads in every session, exactly like the root file, and should therefore be held to the same test.
+
+Rules also suit anything that applies across scattered paths, where an area file would have to be duplicated: migrations wherever they live, generated files wherever they sit.
+
+Create one only when there is real content for it. An empty rule file is a promise that will not be kept.
+
+### CLAUDE.local.md
+
+Anything personal to one developer, such as a sandbox URL or preferred test data, belongs in `CLAUDE.local.md` at the project root, added to `.gitignore`. Keeping it out of the shared file prevents one person's setup from becoming everyone's instruction.
 
 ### Two rules that hold across every generated file
 
@@ -179,13 +222,13 @@ Detail documents, each pulled in by a path rule in the root routing table. Creat
 
 **Stock with an expiry date.** When something exists but is on its way out, say so in the document that describes it: what runs today, what replaces it, which decision settled that, and what may no longer be built on it. Documentation that describes a doomed system as though it were the target quietly teaches the wrong thing to every session that reads it.
 
-### Routing tables
+### Routing
 
-Two tables in the root file and nowhere else. Routing in two places drifts apart, and then the wrong one gets followed.
+Path routing needs no table. A rule with `paths:` frontmatter is loaded by the tooling when a matching file is touched, without the model having to remember to consult anything. Write the globs; do not restate them as a table somewhere.
 
-**Phrase routing** maps what the user actually says to the skill that should run. Use the phrases they really use, in every language they work in. Where the project has hooks, the hooks enforce this table rather than restating it.
+**Phrase routing** does need writing down: a table in the root file mapping what the user actually says to the skill that should run. Use the phrases they really use, in every language they work in. This is the only routing table, and it lives in the root file alone. Routing kept in two places drifts apart, and then the wrong one gets followed.
 
-**Path routing** maps file paths to the reference document that must be read before editing there. It catches what the phrase table misses, because it triggers on what is being touched rather than on how the request was worded.
+Where a phrase must always trigger its skill, a `UserPromptSubmit` hook can enforce it. The table then documents what the hook does rather than hoping the model reads it.
 
 ---
 
