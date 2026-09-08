@@ -43,7 +43,7 @@ def main() -> None:
     if not content:
         return
 
-    # Der Handoff waechst; der Loop-Stand steht oben und darf nie wegfallen.
+    # Notbremse gegen eine ausgeufterte Uebergabe; normal bleibt sie kurz.
     if len(content) > MAX_CHARS:
         content = content[:MAX_CHARS] + "\n\n[gekuerzt, vollstaendig in .claude/state.md]"
 
@@ -51,11 +51,12 @@ def main() -> None:
         "hookSpecificOutput": {
             "hookEventName": "SessionStart",
             "additionalContext": (
-                "PROJEKTSTAND (aus .claude/state.md)\n"
-                f"{content}\n"
-                "Kontext fuer diese Sitzung. Nur erwaehnen, wenn relevant. "
-                "Der Loop-Stand oben wird von den Framework-Skills gepflegt, "
-                "die Uebergabe darunter am Sitzungsende geschrieben."
+                "LETZTE SITZUNG (aus .claude/state.md)\n"
+                f"{content}\n\n"
+                "Wo das Projekt insgesamt steht, sagt der Fahrplan in der "
+                "Wissensbasis; die Wurzel-CLAUDE.md nennt seinen Pfad. Lies ihn, "
+                "bevor du ueber naechste Schritte sprichst. Kontext fuer diese "
+                "Sitzung, nur erwaehnen wenn relevant."
             ),
         }
     }))

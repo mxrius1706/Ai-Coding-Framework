@@ -62,6 +62,11 @@ flowchart TD
     H --> M
 
     N[Session-Ende: session-recap] --> O[(.claude/state.md)]
+    E -->|Phase 0| RM[(roadmap.md)]
+    S --> RM
+    DS --> RM
+    CS --> RM
+    WS --> RM
     O --> P[Session-Start: Hook injiziert Stand]
     P --> H
     H --> N
@@ -181,25 +186,17 @@ Das ist die Stelle, an der aus einem Fehler eine Regel wird. Ohne sie wiederholt
 
 ## Je Session
 
-### 8. Eine Datei, zwei Hälften
+### 8. Zwei Fragen, zwei Dateien
 
-`.claude/state.md` trägt beides, was eine Sitzung nicht überlebt, und ein SessionStart-Hook injiziert sie, bevor der erste Prompt kommt.
+**Wo stehen wir und was kommt als Nächstes** beantwortet der **Fahrplan** (`roadmap.md`) in der Wissensbasis. Er wird in Phase 0 angelegt, noch bevor das PRD existiert, und trägt zunächst genau den Ablauf dieses Baukastens als Schrittliste. Später wachsen die Bauphasen hinein, abgeleitet aus den fertigen Specs. Ein Dokument, zwei Lebensabschnitte eines Projekts, nicht zwei Dokumente.
 
-**Oben der Loop-Stand, dauerhaft.** Eine Zeile „wo stehen wir, was kommt als Nächstes", darunter eine Tabelle mit den Schritten des Ablaufs. Geschrieben von dem Skill, der einen Schritt abgeschlossen hat, nicht von Hand. Ein Stand, den jemand pflegen muss, ist nach zwei Wochen falsch, und ein falscher Stand ist schlimmer als keiner, weil die nächste Sitzung ihm glaubt.
+Gepflegt wird er von den Skills selbst: wer einen Schritt abschließt, trägt ihn ein. Und die Wurzel-`CLAUDE.md` nennt ihn ausdrücklich als **den** Ort für den Status, samt der Pflicht, ihn aktuell zu halten. Beides ist nötig. Ohne den Verweis schaut niemand hin, ohne die Pflicht wird er zum Tagebuch der ersten Woche.
 
-**Unten die Übergabe, flüchtig.** Wird am Sitzungsende überschrieben und beschreibt nur die letzte. Darf lang und konkret sein.
+**Was war letzte Sitzung** beantwortet `.claude/state.md` im Repo, geschrieben von `session-recap`, injiziert von `session-state.py`.
 
-Die Trennung ist kein Schmuck. Wer beides mischt, begräbt das Dauerhafte unter dem Flüchtigen.
+Die Trennung ist der Punkt. Der Fahrplan ändert sich selten, die Übergabe jedes Mal. Wer beides mischt, begräbt das Dauerhafte unter dem Flüchtigen. Und der Fahrplan fasst nichts zusammen, was anderen gehört: der Spec-Index besitzt den Status je Spec, der Fahrplan zeigt nur darauf, und beim Widerspruch gewinnt der Index.
 
-Der Loop-Stand zählt vor allem, solange geplant und spezifiziert wird, denn das zieht sich über viele Sitzungen und die Reihenfolge ist nicht offensichtlich. Deshalb trägt „Als Nächstes" eine Handlung, keinen Phasennamen: „Specs schreiben" sagt nichts, „zuerst das Datenmodell, alles andere zeigt darauf" sagt, wo man anfängt und warum.
-
-Der Handoff ist konkret oder wertlos: Branch, Commit-Bereich, Testzahl, was ansteht und in welcher Reihenfolge. „Wir haben an X gearbeitet" hilft niemandem.
-
-**Skill:** `session-recap`, ausgelöst über `session-recap-trigger.py`
-
-Schreibt die Übergabe in die **untere** Hälfte, unterhalb der Trennlinie. Die Datei wird nie als Ganzes überschrieben, sonst stirbt der Loop-Stand oben still mit. Und weil das Sitzungsende der Moment ist, an dem die obere Hälfte am ehesten veraltet ist, wird sie beim Schreiben mitgeprüft und nötigenfalls korrigiert.
-
-Die Auslöser sind bewusst eng: Abschiedsformeln, die nichts anderes heißen können. Der Test für ein Muster lautet, ob der Satz mitten in der Arbeit fallen kann, ohne das Ende zu meinen. Ein Hook auf Alltagswörter feuert ständig, liegt fast immer falsch und entwertet den Skill, den er erzwingt.
+Als Nächstes trägt in beiden eine Handlung, keinen Phasennamen. Specs schreiben sagt nichts; zuerst das Datenmodell, alles andere zeigt darauf sagt, wo man anfängt und warum. Genau diese Begründung ist nach ein paar Tagen weg.
 
 ---
 
@@ -260,7 +257,8 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | `project-init` | Konfiguration aufbauen | vorhanden |
 | `skill-creator` | Skills bauen und messen | vorhanden |
 | `config-sync` | Konfiguration gegen Code korrigieren | **fehlt** |
-| Projektstand-Datei + Hook | `.claude/state.md`, bei Sitzungsstart injiziert | vorhanden |
+| Fahrplan als Statusquelle | `roadmap.md`, in Phase 0 mit dem Ablauf initialisiert | vorhanden |
+| Übergabe-Datei + Hook | `.claude/state.md`, bei Sitzungsstart injiziert | vorhanden |
 | `session-recap` + Hook | Handoff am Sitzungsende, Abschiedsformeln als Auslöser | vorhanden |
 | Änderungsreview | Gate vor dem Commit | **fehlt** |
 | Projektstand | offene Arbeit beantworten | **fehlt** |

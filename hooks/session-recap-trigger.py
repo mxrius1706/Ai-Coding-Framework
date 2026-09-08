@@ -49,9 +49,9 @@ PATTERNS = (
 
 INSTRUCTION = (
     "PFLICHT: Fuehre zuerst den Skill 'session-recap' aus, bevor du antwortest. "
-    "Schreibe den Handoff in die untere Haelfte von .claude/state.md, unterhalb der "
-    "Trennlinie. Die obere Haelfte mit dem Loop-Stand bleibt erhalten und wird nur "
-    "korrigiert, wenn sie nicht mehr stimmt."
+    "Er schreibt die Uebergabe nach .claude/state.md und prueft dabei den Fahrplan "
+    "in der Wissensbasis: hat diese Sitzung einen Schritt abgeschlossen, wird er "
+    "dort eingetragen, bevor die Uebergabe geschrieben wird."
 )
 
 
