@@ -22,7 +22,8 @@ Der Ausgangspunkt ist eine Beobachtung. Ein Agent, der bei jeder Sitzung bei nul
 | `planning` | Plan je Bauphase, im Planungsmodus geschrieben, vor dem Branch, mit Out of Scope |
 | `execute-plan` | Den freigegebenen Plan abarbeiten, frischer Subagent je Task, zwei Reviews dazwischen |
 | `testing` | Testdisziplin. Zuerst der fehlschlagende Test, Verify Red ist Pflicht |
-| `review-changes` | Gate am Phasenende. Drei Linsen parallel, Gate-Abgleich, reiner Bericht |
+| `review-changes` | Erstes Gate am Phasenende. Drei Linsen parallel, Gate-Abgleich, reiner Bericht |
+| `thermo-nuclear-code-quality-review` | Zweites Gate. Fragt nicht ob der Code richtig ist, sondern ob er wartbar bleibt |
 | `config-sync` | Die Konfiguration gegen ihre vier Autoritäten prüfen und die Drift nachziehen |
 | `session-recap` | Handoff am Sitzungsende, prüft dabei den Fahrplan auf Drift |
 | `grill-me` → `grilling` | Das Interview-Verfahren. Entscheidungsbaum in Runden, bis keine Verzweigung offen ist |

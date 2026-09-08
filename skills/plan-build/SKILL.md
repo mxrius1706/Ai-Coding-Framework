@@ -95,7 +95,7 @@ Write the procedure once, at the top, and state that it holds for every phase wi
 6. **Build along the plan** via `execute-plan`. Decisions taken on the way go into the plan file immediately, not at the end.
 7. **Tests** per the project's rules, `testing`.
 8. **The gate**, item by item.
-9. **Review** via `review-changes` over the whole phase diff, findings fixed, then checked again.
+9. **Two reviews, both mandatory, in this order.** First `review-changes` over the whole phase diff: is the code correct, secure and faithful to the spec? Findings fixed, then checked again. Then `thermo-nuclear-code-quality-review` over the same changes: is it maintainable? That second run is **a gate of its own** - a green `review-changes` alone is not enough, because "correct" and "still changeable in six months" are different questions, and one run asked to answer both answers neither thoroughly. Separate gates also stop the second question being deprioritised against the first. Whatever stays open after both is named in the report as deliberately open, with the reason.
 10. **Pull the configuration back into line** via `config-sync`. After the review, because the review still changes code; before the release, so the drift is in the same report the user decides on.
 11. **Release.** The report goes to the user; pushing and the next phase wait for an explicit go.
 

@@ -260,7 +260,9 @@ Das Änderungsreview misst **nicht** allgemeine Code-Ästhetik, sondern: Tut der
 
 Zwei Regeln machen den Bericht belastbar. **Nachweis oder es zählt nicht:** zu jedem Finding der Pfad bis zum Schaden, der Gegenbeweis und ein Urteil. Und für die Spec-Linse die Nummer der verletzten Anforderung; ein Spec-Finding ohne Nummer ist eine Meinung. Dazu der **Gate-Abgleich** Punkt für Punkt, und ein Punkt, der ohne laufendes System nicht prüfbar ist, heißt „nicht prüfbar", nie „erfüllt".
 
-Die beiden Reviews sind **getrennte** Gates. Ein sauberes Änderungsreview sagt nichts darüber, ob der Code in sechs Monaten noch zu ändern ist.
+Das zweite Gate ist **`thermo-nuclear-code-quality-review`**, und es läuft über dieselben Änderungen. Es fragt nicht, ob der Code richtig ist, sondern ob er in sechs Monaten noch zu ändern ist. Sein Maßstab ist bewusst unbequem: Es sucht nicht nach lokalen Aufräumgelegenheiten, sondern nach dem Umbau, der ganze Verzweigungen, Schichten oder Sonderfälle **verschwinden** lässt, statt sie umzuverteilen. Feste Schwellen gehören dazu, etwa dass eine Datei durch eine Änderung nicht ohne starken Grund über tausend Zeilen wächst, und dass neue Sonderfall-Bedingungen in fremden Abläufen ein Entwurfsproblem sind, keine Stilfrage. Die Messlatte für ein „genehmigt" ist ausdrücklich **nicht**, dass es funktioniert.
+
+Die beiden Reviews sind **getrennte** Gates, und das ist der Punkt. „Richtig" und „wartbar" sind verschiedene Fragen; ein Lauf, der beide beantworten soll, beantwortet keine gründlich. Getrennte Gates halten die zweite Frage außerdem davon ab, gegen die erste wegpriorisiert zu werden — sie verliert sonst immer, weil ein Sicherheitsbefund dringender aussieht als eine wuchernde Datei.
 
 Push erst nach ausdrücklicher Freigabe.
 
@@ -370,7 +372,7 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | `execute-plan` | Plan abarbeiten, frischer Subagent je Task, zwei Reviews dazwischen | vorhanden |
 | `testing` | Testdisziplin, Verify Red, Pflichtfälle aus dem Projekt abgeleitet | vorhanden |
 | `review-changes` | Gate am Phasenende, drei Linsen, Gate-Abgleich, reiner Bericht | vorhanden |
-| Wartbarkeitsreview | Zweites, getrenntes Gate | **fehlt** |
+| `thermo-nuclear-code-quality-review` | Zweites, getrenntes Gate: Wartbarkeit statt Korrektheit | vorhanden |
 | Weitere Hooks | Sofortprüfung nach Edits | **fehlt** |
 
 Was heute steht, trägt den ganzen Weg von der Idee bis zum Ende einer Bauphase und wieder zurück in die Konfiguration. Der Kreis ist damit geschlossen. Offen sind das zweite Review-Gate für Wartbarkeit und die Hooks, die während des Bauens sofort prüfen.
