@@ -46,6 +46,12 @@ flowchart TD
     SP --> WS[write-spec]
     WS --> C
     WS --> SP
+    SP --> PP[plan-pages]
+    PP --> C
+    PP --> UI[write-ui-spec]
+    UI --> AD[artifact-design: Mockup]
+    AD --> UI
+    UI --> SP
     SP --> G[Bauabschnitt: Plan → Freigabe → Branch]
     G --> H[Bauen]
     H --> I[Hooks: Typen, Lint, Tests]
@@ -154,7 +160,27 @@ Ein Aufruf, ein Dokument, gegen den Code verifiziert statt aus dem Gedächtnis. 
 
 Dazu die Trennschärfe bei offenen Punkten: **jetzt-entscheidbar wird gegrillt, nur-von-anderen-beantwortbar bleibt TBD mit Angabe, wer antworten muss.** Grillen heißt Entscheidungen schärfen, nicht jemanden löchern, wo das Wissen fehlt.
 
-*(Noch nicht gebaut: die Seitenplanung und die UI-Specs, die Konsistenzprüfung über den Graph, und der Bau-Fahrplan aus den fertigen Specs.)*
+### Seiten planen
+
+**Skill:** `plan-pages`
+
+Je Oberfläche eine Übersicht: Inventar des Ist-Stands mit Pfaden, Navigationsgraph mit markierten rechte-gebundenen Kanten, Befunde ohne Bewertung, und die Ziel-Seitenliste in neu, bleibt mit Anpassungen, gestrichen.
+
+**Abgeleitet aus den Komponenten-Specs, nicht aus dem PRD.** Das PRD sagt, was das Produkt kann; erst die Specs sagen, wie ein Arbeitstag aussieht, und Seiten folgen dem Arbeitstag. Deshalb steht dieser Schritt zwingend nach den Specs.
+
+Der Navigationsgraph ist Pflicht, nicht Schmuck. Er ist das einzige Artefakt, das zeigt, ob eine Seite überhaupt erreichbar ist, und die markierten Kanten machen nebenbei sichtbar, wo Gating fehlt.
+
+### Eine Seite spezifizieren
+
+**Skill:** `write-ui-spec`, ruft `artifact-design`
+
+Ein Aufruf, eine Seite. Der Unterschied zu jeder anderen Spec: eine Seite kann man ansehen, und das Ansehen ändert Entscheidungen. Deshalb entsteht **das Mockup vor dem Dokument**, es wird am Bild iteriert, und das Dokument hält fest, was das Ansehen überlebt hat.
+
+Zwei Regeln machen das Mockup brauchbar: es **übersetzt** den Vorschlag in die Tokens des Design-Systems und erfindet nichts dazu, und es benutzt **echte Beispieldaten** statt Platzhaltertext. Lorem Ipsum verbirgt genau die Probleme, für die ein Mockup da ist: ein umbrechendes Label, eine zu schmale Spalte, eine Zahl, die länger ist als ihr Platz.
+
+Der wertvollste Fund in Phase 1 ist meist ein anderer: **Specs legen UI-Verhalten fest, ohne UI zu sagen.** Sätze wie „keine Vorauswahl bei einem Vorschlag" oder „der Abschlusstext ist Pflicht im selben Schritt wie der Statuswechsel" stehen dort, weil jemand über Korrektheit nachgedacht hat, und werden übersehen, weil sie nicht unter Oberfläche abgelegt sind.
+
+*(Noch nicht gebaut: die Konsistenzprüfung über den Graph und der Bau-Fahrplan aus den fertigen Specs.)*
 
 ---
 
@@ -254,7 +280,8 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | `design-system` | Visuelle Richtung klären, Tokens schreiben, Beispielseite | vorhanden |
 | `create-specs` | Produkt in Komponenten zerlegen, Spec-Graph anlegen | vorhanden |
 | `write-spec` | Eine Komponente je Aufruf, gegen Code verifiziert | vorhanden |
-| Seitenplanung + UI-Specs | Welche Seiten es gibt, dann je Seite eine Spec mit Mockup | **fehlt** |
+| `plan-pages` | Je Oberfläche eine Seitenübersicht mit Navigationsgraph | vorhanden |
+| `write-ui-spec` | Eine Seite je Aufruf, Mockup vor dem Dokument | vorhanden |
 | Spec-Konsistenz | Den Graph gegeneinander und gegen das PRD prüfen | **fehlt** |
 | Bau-Fahrplan | Reihenfolge mit Gates aus den fertigen Specs ableiten | **fehlt** |
 | `grill-me` → `grilling` | Interview-Verfahren | vorhanden |

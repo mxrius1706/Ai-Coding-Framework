@@ -15,6 +15,8 @@ Der Ausgangspunkt ist eine Beobachtung. Ein Agent, der bei jeder Sitzung bei nul
 | `design-system` | Visuelle Richtung, Tokens im Code, Begründungen im Vault, Beispielseite zur Freigabe |
 | `create-specs` | Das Produkt in Komponenten zerlegen und als verbundenen Spec-Graph anlegen |
 | `write-spec` | Eine Komponente spezifizieren, gegen den Code verifiziert, mit Ripple- und Reverse-Abgleich |
+| `plan-pages` | Welche Seiten es gibt und wie man zwischen ihnen navigiert, aus den Specs abgeleitet |
+| `write-ui-spec` | Eine Seite spezifizieren, Mockup vor dem Dokument, am Bild iteriert |
 | `session-recap` | Handoff am Sitzungsende, prüft dabei den Fahrplan auf Drift |
 | `grill-me` → `grilling` | Das Interview-Verfahren. Entscheidungsbaum in Runden, bis keine Verzweigung offen ist |
 | `project-init` | Der Einstiegspunkt. Wissensbasis, PRD, Stack, Bereiche und die Anweisungsebenen eines Projekts aufbauen |

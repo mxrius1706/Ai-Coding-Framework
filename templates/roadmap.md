@@ -18,11 +18,11 @@ Der Weg von der Idee bis zu vollständigen Spezifikationen. Jeder Schritt hat de
 | 2 | Produktdefinition | `prd` | ⬜ | Interview zuerst, dann schreiben |
 | 3 | Stack | `stack-decisions` | ⬜ | Getrennt vom Produktgespräch |
 | 4 | Design-System | `design-system` | ⬜ | Entfällt ohne Oberfläche |
-| 5 | Projektkonfiguration | `project-init` Phasen 3 bis 5 | ⬜ | CLAUDE.md-Schichten, Regeln, Hooks |
+| 5 | Projektkonfiguration | `project-init` Phasen 3 bis 5 | ⬜ | Wurzel, Bereiche, Pfad-Regeln, Hooks |
 | 6 | Komponentenkarte | `create-specs` | ⬜ | Grenzen werden gegrillt, nicht abgeleitet |
 | 7 | Specs | `write-spec` | ⬜ | 0 von 0, eine Komponente je Aufruf |
-| 8 | Seitenplanung | noch nicht gebaut | ⬜ | Welche Seiten es gibt |
-| 9 | UI-Specs | noch nicht gebaut | ⬜ | 0 von 0, je Seite eine, mit Mockup |
+| 8 | Seitenplanung | `plan-pages` | ⬜ | Je Oberfläche eine Übersicht, aus den Specs abgeleitet |
+| 9 | UI-Specs | `write-ui-spec` | ⬜ | 0 von 0, je Seite eine, Mockup vor dem Dokument |
 | 10 | Konsistenzprüfung | noch nicht gebaut | ⬜ | Der Graph gegen sich und gegen das PRD |
 
 Schritte, die dieses Projekt nicht braucht, werden auf `❌` gesetzt und nicht als offen mitgeschleppt. Ein Projekt ohne Oberfläche hat kein Design-System und keine UI-Specs.
