@@ -1,0 +1,20 @@
+# Secrets - nie einchecken
+.env
+.env.*
+!.env.example
+*.pem
+*.pfx
+*.key
+.credentials.json
+.mcp.local.json
+
+# Claude-Laufzeitdaten (lokal, projektspezifisch)
+.claude/settings.local.json
+.claude/last-session.md
+.claude/plans/
+.claude/cache/
+
+# OS / Editor
+node_modules/
+.DS_Store
+Thumbs.db
