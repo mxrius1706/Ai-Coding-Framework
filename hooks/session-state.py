@@ -4,12 +4,25 @@ Zwei Dateien, zwei Fragen:
 
 - Der **Fahrplan** sagt, wo das Projekt steht und was als Naechstes kommt.
   Er liegt in der Wissensbasis ausserhalb des Repos, deshalb muss sein Pfad
-  hier konfiguriert werden (siehe ROADMAP_PATH unten).
+  hier konfiguriert werden (siehe roadmap_path unten).
 - Die **Uebergabe** in `.claude/state.md` sagt, was letzte Sitzung lief.
 
 Beide werden injiziert statt nur erwaehnt. Eine Anweisung, eine Datei zu
 lesen, ist eine Bitte; injizierter Inhalt liegt einfach da. Genau deshalb
 gibt es diesen Hook ueberhaupt.
+
+Der Fahrplan waechst. In der Aufbauphase ist er kurz; sobald die Bauphasen
+darin stehen, wird er lang - im Referenzprojekt, aus dem dieser Baukasten
+stammt, 65.000 Zeichen. Stumpfes Abschneiden waere hier der schlimmste
+Fehlermodus, weil abgeschnittener Inhalt in der Sitzung wie vollstaendiger
+aussieht. Deshalb wird ab dem Moment, in dem der Fahrplan eine aktuelle
+Bauphase nennt, in zwei Stuecken injiziert:
+
+1. der Kopf bis zum ersten Trenner, also Position und Regeln, und
+2. genau der Abschnitt, auf den die Zeile `**Aktuelle Bauphase:**` zeigt.
+
+Fehlt die Marke, geht der ganze Fahrplan rein. Das ist der Normalfall bis
+zum Bauplan und braucht keine Sonderbehandlung.
 
 Konfiguration des Fahrplan-Pfads, erste Fundstelle gewinnt:
 
@@ -37,14 +50,20 @@ Das `|| true` ist Absicht: ein Fehler hier darf keine Sitzung blockieren.
 
 import json
 import os
+import re
 import sys
 
 MAX_ROADMAP_CHARS = 8000
 MAX_HANDOFF_CHARS = 6000
+MAX_HEAD_CHARS = 4000
+MAX_SECTION_CHARS = 7000
+
+MARKER = re.compile(r"^\*\*Aktuelle Bauphase:\*\*\s*(.+?)\s*$", re.MULTILINE)
+HEADING = re.compile(r"^(#{2,6})\s+(.*)$")
 
 
-def read(path, limit):
-    """Datei lesen, gekuerzt. Gibt None zurueck, wenn es sie nicht gibt."""
+def read_file(path):
+    """Datei lesen. None, wenn es sie nicht gibt oder sie leer ist."""
     if not path or not os.path.exists(path):
         return None
     try:
@@ -52,11 +71,74 @@ def read(path, limit):
             content = handle.read().strip()
     except OSError:
         return None
+    return content or None
+
+
+def clip(text, limit, path):
+    if len(text) > limit:
+        return text[:limit] + "\n\n[gekuerzt, vollstaendig in " + path + "]"
+    return text
+
+
+def split_head(content):
+    """Kopf bis zum ersten Trenner. Ohne Trenner ist der ganze Text der Kopf."""
+    for rule in ("\n---\n", "\n***\n", "\n___\n"):
+        cut = content.find(rule)
+        if cut != -1:
+            return content[:cut].strip()
+    return content.strip()
+
+
+def find_section(content, needle):
+    """Den Abschnitt zurueckgeben, dessen Ueberschrift `needle` enthaelt.
+
+    Verglichen wird kleingeschrieben und ohne Sternchen, damit die Marke
+    `Phase 4` auch auf `## 4. Phase 4 - Teams-Agent **im Bau**` passt. Der
+    Abschnitt endet bei der naechsten Ueberschrift gleicher oder hoeherer
+    Ebene, Unterabschnitte kommen also mit.
+    """
+    needle = needle.replace("*", "").strip().lower()
+    if not needle:
+        return None
+
+    lines = content.splitlines()
+    start = None
+    level = 0
+    for index, line in enumerate(lines):
+        match = HEADING.match(line)
+        if not match:
+            continue
+        if start is None:
+            if needle in match.group(2).replace("*", "").lower():
+                start = index
+                level = len(match.group(1))
+        elif len(match.group(1)) <= level:
+            return "\n".join(lines[start:index]).strip()
+    if start is None:
+        return None
+    return "\n".join(lines[start:]).strip()
+
+
+def roadmap_for_session(path):
+    """Ganzer Fahrplan, oder Kopf plus aktuelle Bauphase, wenn er eine nennt."""
+    content = read_file(path)
     if not content:
         return None
-    if len(content) > limit:
-        content = content[:limit] + f"\n\n[gekuerzt, vollstaendig in {path}]"
-    return content
+
+    head = split_head(content)
+    marker = MARKER.search(head)
+    if marker:
+        section = find_section(content, marker.group(1))
+        if section:
+            return (
+                clip(head, MAX_HEAD_CHARS, path)
+                + "\n\n"
+                + clip(section, MAX_SECTION_CHARS, path)
+                + "\n\n[Nur Kopf und aktuelle Bauphase. Die uebrigen Phasen "
+                "stehen in " + path + " und werden bei Bedarf dort gelesen.]"
+            )
+
+    return clip(content, MAX_ROADMAP_CHARS, path)
 
 
 def roadmap_path(project_dir):
@@ -80,8 +162,12 @@ def roadmap_path(project_dir):
 def main() -> None:
     project_dir = os.environ.get("CLAUDE_PROJECT_DIR", ".")
 
-    roadmap = read(roadmap_path(project_dir), MAX_ROADMAP_CHARS)
-    handoff = read(os.path.join(project_dir, ".claude", "state.md"), MAX_HANDOFF_CHARS)
+    roadmap = roadmap_for_session(roadmap_path(project_dir))
+
+    handoff_path = os.path.join(project_dir, ".claude", "state.md")
+    handoff = read_file(handoff_path)
+    if handoff:
+        handoff = clip(handoff, MAX_HANDOFF_CHARS, handoff_path)
 
     if not roadmap and not handoff:
         return

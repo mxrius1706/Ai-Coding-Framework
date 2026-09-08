@@ -54,7 +54,11 @@ flowchart TD
     UI --> SP
     SP --> SC[spec-consistency]
     SC --> SP
-    SP --> G[Bauabschnitt: Plan → Freigabe → Branch]
+    SC --> PB[plan-build]
+    SP --> PB
+    PB --> C
+    PB --> RM
+    PB --> G[Bauabschnitt: Plan → Freigabe → Branch]
     G --> H[Bauen]
     H --> I[Hooks: Typen, Lint, Tests]
     I --> H
@@ -196,7 +200,23 @@ Der Grund: Widersprüche entstehen durch Ändern, nicht durch Schreiben. Ein Lau
 
 **Reiner Bericht, nie ein Fix.** Nachziehen läuft getrennt über `write-spec`, damit die Korrektur dieselben Prüfungen durchläuft wie das Original.
 
-*(Noch nicht gebaut: der Bau-Fahrplan aus den fertigen Specs.)*
+### Die Baureihenfolge ableiten
+
+**Skill:** `plan-build`
+
+Der Übergang vom Spezifizieren zum Bauen. Liest alle Specs auf einmal und schreibt daraus die Bauphasen in den Fahrplan.
+
+**Schreibreihenfolge und Baureihenfolge sind verschiedene Fragen.** Schreibreihenfolge folgt den Verweisen: zuerst, worauf alles zeigt. Baureihenfolge folgt dem Nutzen: was muss existieren, bevor jemand außerhalb des Projekts etwas funktionieren sieht. Die beiden fallen selten zusammen, und keine beantwortet die andere.
+
+Zuerst das **Abhängigkeitsgerüst** aus dem Graph, also die Fakten: was kann vor was nicht gebaut werden, jeweils mit dem Satz, der die Kante erzeugt. Das ergibt eine bewusst unvollständige Ordnung. Sie sagt, was verboten ist, nicht was gut ist.
+
+Die eigentliche Entscheidung liegt in dem, was sie noch offen lässt, und die wird **gegrillt**: innen nach außen, senkrechte Scheiben oder Wedge zuerst. Das hängt daran, wer das erste Ergebnis sieht und wann, ob es Bestand gibt, der abgeschaltet werden muss, und was sonst zweimal gebaut würde. Aus den Specs ist das nicht ableitbar.
+
+**Ein Gate ist eine Liste von Sätzen, die wahr oder falsch sind.** Die Prüffrage: könnte das jemand nachprüfen, der nicht mitgebaut hat? „Datenmodell sauber umgesetzt" fällt durch, „Migration läuft auf frischer und auf Dev-Datenbank durch, Schema-Diff leer" besteht. Zwei bis drei Punkte je Gate beschreiben den Weg eines Menschen durch das Produkt statt den Zustand des Codes; sie sind die, die eine technisch fertige und praktisch unbrauchbare Phase abfangen.
+
+Dazu einmal das **Ritual je Phase**, das ab dann ohne Ausnahme gilt, die **Meilensteine** über die ganze Strecke, der **negative Umfang** und die **Entscheidungstabelle**. Die letzte ist der Teil, der zuerst verloren geht: nach zwei Monaten weiß niemand mehr, warum der Auth-Umbau in Phase 9 liegt, und ohne den Grund verschiebt ihn der Nächste, dem er im Weg ist.
+
+Geschrieben wird das **in den Fahrplan**, nicht in ein zweites Dokument. Der Fahrplan beantwortet bereits, wo das Projekt steht; ein zweites Dokument, das dieselbe Frage genauer beantwortet, liefert zwei Antworten, die auseinanderlaufen.
 
 ---
 
@@ -204,25 +224,49 @@ Der Grund: Widersprüche entstehen durch Ändern, nicht durch Schreiben. Ein Lau
 
 ### 4. Planen, freigeben, abzweigen
 
+**Skill:** `planning`
+
 Erst Planungsmodus, dann Plandatei, dann Eintrag im Fahrplan, dann Freigabe, dann Branch. In dieser Reihenfolge. Es wird nichts angefasst, bevor der Plan freigegeben ist, auch der Branch existiert vorher nicht.
+
+Der Fahrplan nennt die **Absicht** der Phase, nicht den Weg. Wird der Weg nicht vorher festgelegt, entsteht er während des Bauens, Entscheidung für Entscheidung, an der Stelle, an der Korrekturen am teuersten sind. Der Planungsmodus erzwingt, dass zuerst gelesen und gefragt wird.
+
+Pflichtabschnitte: Kontext, Ziel, Entscheidungen, kritische Dateien, Reihenfolge, Tests, Verifikation, **Out of Scope**. Der letzte fehlt am häufigsten und ist der, der angrenzende Arbeit draußen hält.
 
 Entscheidungen, die während des Bauens fallen, wandern **sofort** in den Entscheidungsabschnitt der Plandatei, nicht am Ende. Was am Ende nachgetragen wird, ist Rekonstruktion und nicht Protokoll.
 
-### 5. Bauen mit Sofortprüfung
+### 5. Bauen
 
-**Mechanismus:** Hooks nach jeder Dateiänderung
+**Skill:** `execute-plan`, dazu Hooks nach jeder Dateiänderung
 
-Typprüfung und Linter laufen nach jedem Edit, Tests laufen, wenn der geänderte Pfad welche hat. Das Ergebnis landet im selben Arbeitsschritt, nicht in einem Durchlauf danach. Ein Fehler, der sofort zurückkommt, kostet einen Gedanken. Derselbe Fehler zwanzig Änderungen später kostet eine Suche.
+Ein Task nach dem anderen, je Task ein **frischer Subagent**, und nach jedem Task zwei Reviews, bevor der nächste beginnt. Der Koordinator kuratiert Kontext und schreibt selbst keinen Code: Wer selbst implementiert, füllt seinen Kontext mit Detail, das in einen Subagenten gehört, und hat danach niemanden mehr mit Außensicht.
+
+Die beiden Reviews je Task fragen Verschiedenes. **Spec-Treue** prüft, ob genau das gebaut wurde, was der Plan verlangt, und ob etwas gebaut wurde, das er **nicht** verlangt. Der zweite Fall ist der Fund, den sonst niemand macht. **Qualität** prüft erst danach, sonst wird über die Machart von etwas geurteilt, das noch das Falsche tut.
+
+Was der Subagent nicht im Bündel hat, existiert für ihn nicht. Deshalb wird Inhalt eingebettet, nicht auf Pfade verwiesen. Ein Pfad im Prompt ist eine Bitte.
+
+Parallel dazu die Sofortprüfung: Typprüfung und Linter laufen nach jedem Edit, Tests, wenn der geänderte Pfad welche hat. Ein Fehler, der sofort zurückkommt, kostet einen Gedanken. Derselbe Fehler zwanzig Änderungen später kostet eine Suche.
+
+**Tests** folgen `testing`: kein Produktionscode ohne zuerst fehlschlagenden Test, und **Verify Red ist Pflicht**. Wer den Fehlschlag nicht gesehen hat, weiß nicht, ob der Test das Richtige prüft. Welche Fälle Pflicht sind, leitet der Skill aus dem Projekt ab statt aus einem Katalog: aus den Akzeptanzkriterien der Specs, aus den bindenden Regeln der Wurzel und aus den getroffenen Entscheidungen. Ein Verbot, das keinen Test hat, überlebt den, der es beschlossen hat, nicht.
 
 ### 6. Abschluss-Gates
 
-Am Ende eines Abschnitts, in fester Reihenfolge: Checkliste, Tests grün, Änderungsreview, Wartbarkeitsreview, Bericht. Die beiden Reviews sind **getrennte** Gates. Ein sauberes Änderungsreview sagt nichts darüber, ob der Code in sechs Monaten noch zu ändern ist.
+**Skill:** `review-changes`
+
+Am Ende eines Abschnitts, in fester Reihenfolge: Checkliste, Tests grün, Änderungsreview, Wartbarkeitsreview, Bericht.
+
+Das Änderungsreview misst **nicht** allgemeine Code-Ästhetik, sondern: Tut der Code, was die Spec sagt, auf die Art, wie dieses Projekt es sonst tut? Es lädt gezielt die Specs der geänderten Pfade und fächert in **drei Linsen** auf, jede mit einem eigenen Kopf: Sicherheit, Spec-Treue, Struktur. Drei Denkweisen; zusammengelegt kostet es Tiefe, weiter aufgeteilt fallen Findings durch die Ritzen.
+
+Zwei Regeln machen den Bericht belastbar. **Nachweis oder es zählt nicht:** zu jedem Finding der Pfad bis zum Schaden, der Gegenbeweis und ein Urteil. Und für die Spec-Linse die Nummer der verletzten Anforderung; ein Spec-Finding ohne Nummer ist eine Meinung. Dazu der **Gate-Abgleich** Punkt für Punkt, und ein Punkt, der ohne laufendes System nicht prüfbar ist, heißt „nicht prüfbar", nie „erfüllt".
+
+Die beiden Reviews sind **getrennte** Gates. Ein sauberes Änderungsreview sagt nichts darüber, ob der Code in sechs Monaten noch zu ändern ist.
 
 Push erst nach ausdrücklicher Freigabe.
 
 ### 7. Rückfluss
 
-Was gebaut wurde, wird in die Specs nachgezogen. Muster, die im Review **zweimal** aufgetaucht sind, wandern in den Abschnitt für bekannte Schwachstellen der Wurzel-`CLAUDE.md`.
+Was gebaut wurde, wird in die Specs nachgezogen. Das Review liefert die Liste dafür selbst: Es findet regelmäßig Stellen, an denen **die Spec** das Problem ist und nicht der Code, und sammelt sie in einem eigenen Abschnitt „Spec-Rückfluss". Ohne den gehen diese Funde verloren, weil der Bericht sonst nur Code bewertet. Nachgezogen wird über `write-spec`, nicht im Review selbst.
+
+Muster, die im Review **zweimal** aufgetaucht sind, wandern in den Abschnitt für bekannte Schwachstellen der Wurzel-`CLAUDE.md`. Einmal ist ein Vorfall, zweimal ist ein Muster.
 
 Das ist die Stelle, an der aus einem Fehler eine Regel wird. Ohne sie wiederholt sich derselbe Fehler, bis jemand ihn zufällig erinnert.
 
@@ -239,6 +283,8 @@ Gepflegt wird er von den Skills selbst: wer einen Schritt abschließt, trägt ih
 **Was war letzte Sitzung** beantwortet `.claude/state.md` im Repo, geschrieben von `session-recap`.
 
 Beide werden vom SessionStart-Hook **injiziert**, nicht nur erwähnt, samt der Anweisung, die Sitzung mit Standort und Vorschlag zu eröffnen statt auf eine Frage zu warten. Eine Anweisung, eine Datei zu lesen, ist eine Bitte; injizierter Inhalt liegt einfach da. Der Fahrplan lebt außerhalb des Repos, deshalb schreibt `project-init` seinen Pfad beim Installieren nach `.claude/roadmap-path`.
+
+**Er wächst, und ab einer Größe wird nicht mehr alles injiziert.** In der Aufbauphase ist der Fahrplan kurz und geht ganz in die Sitzung. Sobald die Bauphasen darin stehen, passt er nicht mehr: das Referenzprojekt, aus dem dieser Baukasten stammt, hat 65.000 Zeichen. Stumpfes Abschneiden wäre hier der schlimmste Fehlermodus, weil abgeschnittener Inhalt in der Sitzung genauso aussieht wie vollständiger. Deshalb trägt der Kopf die Zeile `**Aktuelle Bauphase:**`, und der Hook injiziert von da an **den Kopf und genau den Abschnitt, dessen Überschrift diesen Text enthält**. Die übrigen Phasen bleiben lesbar, sie liegen nur nicht mehr in jeder Sitzung herum. Der Preis ist eine Zeile, die stimmen muss: zeigt sie auf die falsche Phase, arbeitet die nächste Sitzung mit der falschen Phase, ohne dass etwas fehlschlägt. Sie wird beim Phasenwechsel gesetzt, im selben Zug wie „Jetzt".
 
 Die Trennung ist der Punkt. Der Fahrplan ändert sich selten, die Übergabe jedes Mal. Wer beides mischt, begräbt das Dauerhafte unter dem Flüchtigen. Und der Fahrplan fasst nichts zusammen, was anderen gehört: der Spec-Index besitzt den Status je Spec, der Fahrplan zeigt nur darauf, und beim Widerspruch gewinnt der Index.
 
@@ -299,7 +345,7 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | `plan-pages` | Je Oberfläche eine Seitenübersicht mit Navigationsgraph | vorhanden |
 | `write-ui-spec` | Eine Seite je Aufruf, Mockup vor dem Dokument | vorhanden |
 | `spec-consistency` | Den Graph gegeneinander und gegen die Produktwahrheit prüfen | vorhanden |
-| Bau-Fahrplan | Reihenfolge mit Gates aus den fertigen Specs ableiten | **fehlt** |
+| `plan-build` | Baureihenfolge mit Gates aus den fertigen Specs ableiten | vorhanden |
 | `grill-me` → `grilling` | Interview-Verfahren | vorhanden |
 | `project-init` | Konfiguration aufbauen | vorhanden |
 | `skill-creator` | Skills bauen und messen | vorhanden |
@@ -307,8 +353,11 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | Fahrplan als Statusquelle | `templates/roadmap.md`, vorbefüllt, in Phase 0 kopiert | vorhanden |
 | Übergabe + Hooks | `.claude/state.md`; Hook injiziert Fahrplan und Übergabe | vorhanden |
 | `session-recap` + Hook | Handoff am Sitzungsende, Abschiedsformeln als Auslöser | vorhanden |
-| Änderungsreview | Gate vor dem Commit | **fehlt** |
-| Projektstand | offene Arbeit beantworten | **fehlt** |
-| Weitere Hooks | Sofortprüfung nach Edits, Phrasen-Routing | **fehlt** |
+| `planning` | Plan je Phase, im Planungsmodus, vor dem Branch | vorhanden |
+| `execute-plan` | Plan abarbeiten, frischer Subagent je Task, zwei Reviews dazwischen | vorhanden |
+| `testing` | Testdisziplin, Verify Red, Pflichtfälle aus dem Projekt abgeleitet | vorhanden |
+| `review-changes` | Gate am Phasenende, drei Linsen, Gate-Abgleich, reiner Bericht | vorhanden |
+| Wartbarkeitsreview | Zweites, getrenntes Gate | **fehlt** |
+| Weitere Hooks | Sofortprüfung nach Edits | **fehlt** |
 
-Was heute steht, trägt die Schritte 1 bis 3: von der Idee zum Gerüst. Alles danach ist beschrieben, aber noch nicht gebaut.
+Was heute steht, trägt den Weg von der Idee bis zum Ende einer Bauphase. Was fehlt, ist der Rückweg: `config-sync`, der die Konfiguration gegen den gebauten Code korrigiert, das zweite Review-Gate für Wartbarkeit, und die Hooks, die während des Bauens sofort prüfen.

@@ -18,12 +18,17 @@ Der Ausgangspunkt ist eine Beobachtung. Ein Agent, der bei jeder Sitzung bei nul
 | `plan-pages` | Welche Seiten es gibt und wie man zwischen ihnen navigiert, aus den Specs abgeleitet |
 | `write-ui-spec` | Eine Seite spezifizieren, Mockup vor dem Dokument, am Bild iteriert |
 | `spec-consistency` | Den Spec-Graph auf Widersprüche prüfen. Auslöser statt Takt, reiner Bericht |
+| `plan-build` | Aus den fertigen Specs die Bauphasen mit Gates ableiten und in den Fahrplan schreiben |
+| `planning` | Plan je Bauphase, im Planungsmodus geschrieben, vor dem Branch, mit Out of Scope |
+| `execute-plan` | Den freigegebenen Plan abarbeiten, frischer Subagent je Task, zwei Reviews dazwischen |
+| `testing` | Testdisziplin. Zuerst der fehlschlagende Test, Verify Red ist Pflicht |
+| `review-changes` | Gate am Phasenende. Drei Linsen parallel, Gate-Abgleich, reiner Bericht |
 | `session-recap` | Handoff am Sitzungsende, prüft dabei den Fahrplan auf Drift |
 | `grill-me` → `grilling` | Das Interview-Verfahren. Entscheidungsbaum in Runden, bis keine Verzweigung offen ist |
 | `project-init` | Der Einstiegspunkt. Wissensbasis, PRD, Stack, Bereiche und die Anweisungsebenen eines Projekts aufbauen |
 | `skill-creator` | Skills bauen, verbessern und ihre Trefferquote messen |
 
-Zwei Dateien tragen über Sitzungsgrenzen. Der **Fahrplan** `roadmap.md` in der Wissensbasis beantwortet, wo das Projekt steht und was als Nächstes kommt; er wird gleich zu Beginn aus `templates/roadmap.md` kopiert, bereits mit dem Ablauf ausgefüllt, und wächst später zum Bau-Fahrplan. `.claude/state.md` im Repo trägt die Übergabe der letzten Sitzung. Dazu zwei Hooks in `hooks/`: `session-state.py` injiziert Fahrplan und Übergabe bei Sitzungsstart und lässt die Sitzung mit dem nächsten Schritt eröffnen, `session-recap-trigger.py` erzwingt sie bei Abschiedsformeln.
+Zwei Dateien tragen über Sitzungsgrenzen. Der **Fahrplan** `roadmap.md` in der Wissensbasis beantwortet, wo das Projekt steht und was als Nächstes kommt; er wird gleich zu Beginn aus `templates/roadmap.md` kopiert, bereits mit dem Ablauf ausgefüllt, und wächst später um die Bauphasen, die `plan-build` aus den fertigen Specs ableitet. Ab dann ist er zu groß für jede Sitzung, deshalb injiziert der Hook nur noch den Kopf und den Abschnitt, auf den die Zeile `Aktuelle Bauphase` zeigt. `.claude/state.md` im Repo trägt die Übergabe der letzten Sitzung. Dazu zwei Hooks in `hooks/`: `session-state.py` injiziert Fahrplan und Übergabe bei Sitzungsstart und lässt die Sitzung mit dem nächsten Schritt eröffnen, `session-recap-trigger.py` erzwingt sie bei Abschiedsformeln.
 
 Der Kreislauf ist noch nicht geschlossen. Die Tabelle am Ende von [LOOP.md](LOOP.md) sagt, was fehlt.
 
