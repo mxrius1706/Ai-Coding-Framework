@@ -98,7 +98,9 @@ Hier läuft **ein** Skill: `project-init`. Er ist der Einstiegspunkt und holt si
 
 Vor allem anderen, auch vor dem PRD. Prüft, ob ein Obsidian-MCP verfügbar ist, führt sonst durch die Einrichtung, und legt die Vault-Struktur an: `PRD.md`, `roadmap.md`, `specs/_index.md`, `specs/decisions/`.
 
-Warum das zuerst kommt: Das PRD braucht einen Ort, bevor es geschrieben wird. Wer es erst erzeugt und danach überlegt, wohin damit, legt es im Repo ab. Dort hängt es an einem Branch, wird irgendwann der Bequemlichkeit halber ein zweites Mal abgelegt, und ein halbes Jahr später widersprechen sich zwei Fassungen und niemand weiß, welche gilt.
+Hier wird auch die **Statuszeile** angeboten, weil das die Stelle ist, an der die rechnerweite Einrichtung ohnehin passiert. Drei Bedingungen müssen zusammenkommen: Arbeit im Terminal, noch keine `statusLine` gesetzt, und Zustimmung. Bei bereits gesetzter `statusLine` wird stillschweigend übersprungen — es ist eine Einstellung je Rechner, und in jedem neuen Projekt danach zu fragen, ist nur Lärm. Was sie liefert, ist das, was eine Sitzung sonst über sich selbst nicht weiß: verbrauchtes Limit-Fenster samt Hochrechnung, Füllstand des Kontexts, Modell und Modus, Kosten, Zustand des Arbeitsbaums. Genau die Zahlen, an denen hängt, wann übergeben wird.
+
+Warum die Wissensbasis zuerst kommt: Das PRD braucht einen Ort, bevor es geschrieben wird. Wer es erst erzeugt und danach überlegt, wohin damit, legt es im Repo ab. Dort hängt es an einem Branch, wird irgendwann der Bequemlichkeit halber ein zweites Mal abgelegt, und ein halbes Jahr später widersprechen sich zwei Fassungen und niemand weiß, welche gilt.
 
 ### Phase 1: Produkt
 
@@ -359,6 +361,7 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | `grill-me` → `grilling` | Interview-Verfahren | vorhanden |
 | `project-init` | Konfiguration aufbauen | vorhanden |
 | `skill-creator` | Skills bauen und messen | vorhanden |
+| `claude-statusbar` | Statuszeile im Terminal, optional in Phase 0 angeboten | vorhanden |
 | `config-sync` | Konfiguration gegen ihre vier Autoritäten prüfen und nachziehen | vorhanden |
 | Fahrplan als Statusquelle | `templates/roadmap.md`, vorbefüllt, in Phase 0 kopiert | vorhanden |
 | Übergabe + Hooks | `.claude/state.md`; Hook injiziert Fahrplan und Übergabe | vorhanden |

@@ -76,6 +76,16 @@ It is the file that answers "where are we", and it answers it from the very firs
 
 It starts as the setup process and grows into the build plan. Same document, two stages of a project's life, which is why it exists this early.
 
+### Optional: the status bar
+
+Offered here because this is where the machine-level setup happens, next to the MCP server, rather than interrupting later.
+
+**Three conditions, all of them.** The user works in the terminal, because the status line does not appear in an IDE or on the web. No status line is configured yet - if `statusLine` is already set in the user's settings, skip this **silently**, since it is a per-machine setting and re-offering it in every new project is noise. And the user says yes: this installs a third-party tool from the network, so it is offered, never run unasked.
+
+What it buys is what a session otherwise cannot see about itself: how much of the rate-limit window is used and what that projects to, how full the context is, which model and mode are running, the session cost, and the state of the working tree. Those are the numbers that decide when to hand off, and without them the decision is a guess.
+
+The `claude-statusbar` skill handles installation and configuration. `cs --setup` installs, `cs upgrade` is the only supported upgrade path, and `cs doctor` diagnoses. If the user declines, say nothing further about it.
+
 ---
 
 ## Phase 1: PRD

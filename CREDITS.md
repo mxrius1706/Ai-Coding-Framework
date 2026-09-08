@@ -8,12 +8,15 @@ Der Baukasten enthält fremde Skills, teils unverändert, teils angepasst. Diese
 | `prd` | [github/awesome-copilot](https://github.com/github/awesome-copilot), `skills/prd` | siehe Quelle | **angepasst** |
 | `grill-me` | [mattpocock/skills](https://github.com/mattpocock/skills), `skills/productivity/grill-me` | siehe Quelle | **angepasst** |
 | `grilling` | mit `grill-me` ausgeliefert, nicht separat in der Lock-Datei geführt | siehe Quelle | unverändert |
+| `claude-statusbar` | [leeguooooo/claude-code-usage-bar](https://github.com/leeguooooo/claude-code-usage-bar), Paket `claude-statusbar` 3.42.0 | MIT | unverändert |
 
 ## Vorgenommene Anpassungen
 
 **`prd`** - Phase 1 hieß im Original „Discovery (The Interview)" und stellte ein paar Standardfragen. Sie heißt jetzt „Discovery (Grill the Idea)" und ruft verbindlich den `grill-me`-Skill auf. Begründung im Skill selbst: ein PRD aus oberflächlichen Antworten wird zu „aspirational fiction". Zusätzlich darf der Nutzer das Interview abkürzen, offene Punkte werden dann als `TBD` markiert statt erfunden.
 
 **`grill-me`** - `disable-model-invocation` von `true` auf `false` gesetzt. Ohne diese Änderung kann `prd` den Skill nicht selbst aufrufen und die Kopplung oben läuft ins Leere.
+
+**`claude-statusbar`** - unverändert übernommen. Der Skill steuert das externe Werkzeug `cs`, das nicht Teil dieses Repos ist und über `cs --setup` installiert wird. `project-init` bietet das in Phase 0 an, wenn drei Bedingungen zusammenkommen: Arbeit im Terminal, noch keine `statusLine` konfiguriert, und Zustimmung des Nutzers. Es ist eine Einstellung je Rechner, nicht je Projekt, deshalb wird bei bereits gesetzter `statusLine` stillschweigend übersprungen statt erneut gefragt.
 
 ## Aufrufkette
 

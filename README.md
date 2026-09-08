@@ -28,6 +28,7 @@ Der Ausgangspunkt ist eine Beobachtung. Ein Agent, der bei jeder Sitzung bei nul
 | `grill-me` → `grilling` | Das Interview-Verfahren. Entscheidungsbaum in Runden, bis keine Verzweigung offen ist |
 | `project-init` | Der Einstiegspunkt. Wissensbasis, PRD, Stack, Bereiche und die Anweisungsebenen eines Projekts aufbauen |
 | `skill-creator` | Skills bauen, verbessern und ihre Trefferquote messen |
+| `claude-statusbar` | Die Statuszeile im Terminal einrichten und steuern. Optional, wird bei `project-init` angeboten |
 
 Zwei Dateien tragen über Sitzungsgrenzen. Der **Fahrplan** `roadmap.md` in der Wissensbasis beantwortet, wo das Projekt steht und was als Nächstes kommt; er wird gleich zu Beginn aus `templates/roadmap.md` kopiert, bereits mit dem Ablauf ausgefüllt, und wächst später um die Bauphasen, die `plan-build` aus den fertigen Specs ableitet. Ab dann ist er zu groß für jede Sitzung, deshalb injiziert der Hook nur noch den Kopf und den Abschnitt, auf den die Zeile `Aktuelle Bauphase` zeigt. `.claude/state.md` im Repo trägt die Übergabe der letzten Sitzung. Dazu zwei Hooks in `hooks/`: `session-state.py` injiziert Fahrplan und Übergabe bei Sitzungsstart und lässt die Sitzung mit dem nächsten Schritt eröffnen, `session-recap-trigger.py` erzwingt sie bei Abschiedsformeln.
 
