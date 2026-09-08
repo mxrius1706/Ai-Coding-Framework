@@ -11,8 +11,9 @@ Der Ausgangspunkt ist eine Beobachtung. Ein Agent, der bei jeder Sitzung bei nul
 | Skill | Wozu |
 |---|---|
 | `prd` | Produkt spezifizieren. Führt vorher ein Interview, statt Absichten aufzuschreiben |
+| `stack-decisions` | Technische Entscheidungen treffen und als Datensatz festhalten. Auch einzeln, wenn später etwas getauscht wird |
 | `grill-me` → `grilling` | Das Interview-Verfahren. Entscheidungsbaum in Runden, bis keine Verzweigung offen ist |
-| `project-init` | Wissensbasis, Stack-Interview und die CLAUDE.md-Schichten eines Projekts aufbauen |
+| `project-init` | Der Einstiegspunkt. Wissensbasis, PRD, Stack, Bereiche und die CLAUDE.md-Schichten eines Projekts aufbauen |
 | `skill-creator` | Skills bauen, verbessern und ihre Trefferquote messen |
 
 Der Kreislauf ist noch nicht geschlossen. Die Tabelle am Ende von [LOOP.md](LOOP.md) sagt, was fehlt.

@@ -30,7 +30,9 @@ flowchart TD
     B --> C[grill-me → grilling]
     C --> B
     B --> D
-    E -->|Phase 2: Stack| C
+    E -->|Phase 2| S[stack-decisions]
+    S --> C
+    S --> D
     E -->|Phase 3 bis 5| F[CLAUDE.md-Schichten im Repo]
 
     F --> G[Bauabschnitt: Plan → Freigabe → Branch]
@@ -82,7 +84,7 @@ Ohne dieses Interview wird ein PRD zu dem, was der `prd`-Skill selbst „aspirat
 
 ### Phase 2: Stack
 
-Ein **eigenes** Interview, wieder über `grill-me`, getrennt vom Produktgespräch.
+`project-init` ruft **`stack-decisions`** auf, das sein eigenes Interview über `grill-me` führt und je Entscheidung einen Datensatz in die Wissensbasis schreibt. Getrennt vom Produktgespräch.
 
 Der Grund für die Trennung: Das PRD sagt nichts über die Technik und markiert einen unbestimmten Stack selbst als `TBD`. Regeln für einen Stack, den niemand gewählt hat, lesen sich wie richtige Regeln und werden befolgt. Nur bestätigte Technologie erzeugt technische Regeln, alles andere bleibt `TBD` mit dem Hinweis, was es klären würde.
 
@@ -90,9 +92,9 @@ Der Grund für die Trennung: Das PRD sagt nichts über die Technik und markiert 
 
 Bereichskarte aus dem Stack ableiten, Plan vorlegen, nach Freigabe schreiben.
 
-**Ergebnis:** Wurzel-`CLAUDE.md`, Bereichs-`CLAUDE.md` je Bereich, `.claude/references/`, und die Wissensbasis-Tabelle, die auf den Vault zeigt.
+**Ergebnis:** Wurzel-`CLAUDE.md`, Bereichs-`CLAUDE.md` je Bereich, `.claude/rules/` mit `paths:`-Frontmatter, und die Wissensbasis-Tabelle, die auf den Vault zeigt.
 
-> **Einzeln aufrufbar bleibt alles trotzdem.** Wer nur ein PRD will, ruft `prd` direkt auf. `project-init` findet ein bestehendes PRD und setzt darauf auf, statt es neu zu erfragen.
+> **Einzeln aufrufbar bleibt alles trotzdem.** Wer nur ein PRD will, ruft `prd` direkt auf. Wer später eine Technologie tauscht, ruft `stack-decisions` direkt auf, ohne den ganzen Projektstart. `project-init` findet vorhandene Ergebnisse und setzt darauf auf, statt neu zu fragen.
 
 ---
 
@@ -180,6 +182,7 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | Baustein | Zweck | Stand |
 |---|---|---|
 | `prd` | Produkt spezifizieren | vorhanden |
+| `stack-decisions` | Technische Entscheidungen treffen und festhalten | vorhanden |
 | `grill-me` → `grilling` | Interview-Verfahren | vorhanden |
 | `project-init` | Konfiguration aufbauen | vorhanden |
 | `skill-creator` | Skills bauen und messen | vorhanden |

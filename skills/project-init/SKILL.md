@@ -86,24 +86,13 @@ The PRD supplies the product section of the configuration and, above all, the no
 
 ---
 
-## Phase 2: Stack interview
+## Phase 2: Stack
 
-Invoke `grill-me` and settle the technical decisions. This is deliberately a separate conversation from the PRD.
+Invoke the `stack-decisions` skill. It runs its own interview through `grill-me` and writes one record per settled decision into the knowledge base.
 
-The danger it avoids is worth naming. A configuration full of confident, specific rules for a stack nobody chose reads exactly like a configuration full of correct rules. It is fiction shaped like documentation, and it will be followed. Only write a technical rule once the user has confirmed the technology it belongs to.
+This is deliberately a separate conversation from the PRD, and the danger it avoids is worth naming. A configuration full of confident, specific rules for a stack nobody chose reads exactly like a configuration full of correct rules. It is fiction shaped like documentation, and it will be followed. Only write a technical rule once the technology it belongs to has been confirmed.
 
-Cover at least:
-
-- **Language and runtime**, with versions where they matter
-- **Framework**, and which of its conventions this project actually adopts
-- **Data layer**: database, ORM or query layer, migration tooling
-- **Validation**: where input is checked, and with what
-- **Authentication and authorization**, including where the check happens
-- **Testing**: framework, what must be covered, what is deliberately not
-- **Deployment target**, in as much detail as it affects the code
-- **Secret handling**: where secrets live and how the code reaches them
-
-Anything the user cannot answer stays `TBD` in the generated files, with a note on what would settle it. A `TBD` a future session can act on beats an invented answer it will trust.
+What comes back is the set of settled decisions plus the ones left open as `TBD`. Both matter for what follows: phase 3 derives the area map from the settled ones, and every open one becomes a `TBD` in a generated file rather than a guess.
 
 ---
 
@@ -216,9 +205,11 @@ Create one only when there is real content for it. An empty rule file is a promi
 
 Anything personal to one developer, such as a sandbox URL or preferred test data, belongs in `CLAUDE.local.md` at the project root, added to `.gitignore`. Keeping it out of the shared file prevents one person's setup from becoming everyone's instruction.
 
-### Two ways a written file fails silently
+### Three ways a written file fails silently
 
-Both of these produce a file that looks correct in an editor and does nothing.
+Each of these produces a file that looks correct in an editor and does nothing.
+
+**Unquoted YAML that contains a colon.** In frontmatter, a `: ` inside an unquoted value ends the scalar, and the rest of the line is read as a new mapping key. The whole block then fails to parse, and a block that fails to parse does not degrade gracefully: every field is dropped, so a skill loses its name and description and a rule loses its `paths:`. Descriptions are where this bites, because a natural sentence reaches for a colon. Quote any value containing a colon, or rewrite the sentence without one, and parse the block after writing rather than assuming.
 
 **A byte order mark before the frontmatter.** On Windows many editors and some write paths prepend a BOM. A file starting with those three bytes and then `---` no longer has frontmatter as far as the parser is concerned, so a rule's `paths:` never applies and a skill loses its name, description and every other field. Write these files without a BOM, and when editing an existing one, check whether it had one before you prepend anything.
 
