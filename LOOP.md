@@ -61,8 +61,8 @@ flowchart TD
     D --> M
     H --> M
 
-    N[Session-Ende: Handoff schreiben] --> O[(last-session)]
-    O --> P[Session-Start: Handoff einlesen]
+    N[Session-Ende: session-recap] --> O[(.claude/state.md)]
+    O --> P[Session-Start: Hook injiziert Stand]
     P --> H
     H --> N
 
@@ -195,7 +195,11 @@ Der Loop-Stand zählt vor allem, solange geplant und spezifiziert wird, denn das
 
 Der Handoff ist konkret oder wertlos: Branch, Commit-Bereich, Testzahl, was ansteht und in welcher Reihenfolge. „Wir haben an X gearbeitet" hilft niemandem.
 
-*(Das Schreiben der Übergabe am Sitzungsende fehlt noch als eigener Baustein. Der Hook und die Datei stehen.)*
+**Skill:** `session-recap`, ausgelöst über `session-recap-trigger.py`
+
+Schreibt die Übergabe in die **untere** Hälfte, unterhalb der Trennlinie. Die Datei wird nie als Ganzes überschrieben, sonst stirbt der Loop-Stand oben still mit. Und weil das Sitzungsende der Moment ist, an dem die obere Hälfte am ehesten veraltet ist, wird sie beim Schreiben mitgeprüft und nötigenfalls korrigiert.
+
+Die Auslöser sind bewusst eng: Abschiedsformeln, die nichts anderes heißen können. Der Test für ein Muster lautet, ob der Satz mitten in der Arbeit fallen kann, ohne das Ende zu meinen. Ein Hook auf Alltagswörter feuert ständig, liegt fast immer falsch und entwertet den Skill, den er erzwingt.
 
 ---
 
@@ -257,7 +261,7 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | `skill-creator` | Skills bauen und messen | vorhanden |
 | `config-sync` | Konfiguration gegen Code korrigieren | **fehlt** |
 | Projektstand-Datei + Hook | `.claude/state.md`, bei Sitzungsstart injiziert | vorhanden |
-| Übergabe schreiben | Handoff am Sitzungsende erzeugen | **fehlt** |
+| `session-recap` + Hook | Handoff am Sitzungsende, Abschiedsformeln als Auslöser | vorhanden |
 | Änderungsreview | Gate vor dem Commit | **fehlt** |
 | Projektstand | offene Arbeit beantworten | **fehlt** |
 | Weitere Hooks | Sofortprüfung nach Edits, Phrasen-Routing | **fehlt** |

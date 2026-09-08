@@ -217,7 +217,12 @@ Everything above spans far more than one session. The product interview, the sta
 
 So create `.claude/state.md`, carrying where the project stands at the top and the last session's handoff below, and register a SessionStart hook that injects it. **Read `references/state-file.md` for the shape and the rules about who writes which half.**
 
-The hook is what makes this reliable. An instruction in a `CLAUDE.md` asking the model to read a file first is a request; a hook runs regardless. The framework ships `hooks/session-state.py` for this: copy it to `.claude/hooks/` and register it.
+The hook is what makes this reliable. An instruction in a `CLAUDE.md` asking the model to read a file first is a request; a hook runs regardless. The framework ships two for this, both copied to `.claude/hooks/` and registered:
+
+- `session-state.py` on SessionStart, which injects the file
+- `session-recap-trigger.py` on UserPromptSubmit, which forces the handoff to be written when someone says goodbye
+
+A phrase hook fires on every prompt, so its patterns have to be unambiguous. The test for one: could this sentence be said mid-work without meaning what the hook assumes? If yes, it does not belong in the list. A hook triggering on everyday words fires constantly, is almost always wrong, and devalues the skill it forces, because that skill then runs whether or not it was wanted.
 
 Fill the state file in as the last act of writing, with every phase that has actually run marked done and a concrete next step spelled out. Not a phase name, an action: which document to write first and why.
 
