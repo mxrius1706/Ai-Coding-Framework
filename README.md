@@ -17,7 +17,7 @@ Der Ausgangspunkt ist eine Beobachtung. Ein Agent, der bei jeder Sitzung bei nul
 | `write-spec` | Eine Komponente spezifizieren, gegen den Code verifiziert, mit Ripple- und Reverse-Abgleich |
 | `session-recap` | Handoff am Sitzungsende, prüft dabei den Fahrplan auf Drift |
 | `grill-me` → `grilling` | Das Interview-Verfahren. Entscheidungsbaum in Runden, bis keine Verzweigung offen ist |
-| `project-init` | Der Einstiegspunkt. Wissensbasis, PRD, Stack, Bereiche und die CLAUDE.md-Schichten eines Projekts aufbauen |
+| `project-init` | Der Einstiegspunkt. Wissensbasis, PRD, Stack, Bereiche und die Anweisungsebenen eines Projekts aufbauen |
 | `skill-creator` | Skills bauen, verbessern und ihre Trefferquote messen |
 
 Zwei Dateien tragen über Sitzungsgrenzen. Der **Fahrplan** `roadmap.md` in der Wissensbasis beantwortet, wo das Projekt steht und was als Nächstes kommt; er wird gleich zu Beginn aus `templates/roadmap.md` kopiert, bereits mit dem Ablauf ausgefüllt, und wächst später zum Bau-Fahrplan. `.claude/state.md` im Repo trägt die Übergabe der letzten Sitzung. Dazu zwei Hooks in `hooks/`: `session-state.py` injiziert Fahrplan und Übergabe bei Sitzungsstart und lässt die Sitzung mit dem nächsten Schritt eröffnen, `session-recap-trigger.py` erzwingt sie bei Abschiedsformeln.

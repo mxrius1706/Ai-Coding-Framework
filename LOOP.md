@@ -38,7 +38,7 @@ flowchart TD
     DS --> C
     DS --> D
     DS --> TK[Token-Datei im Repo]
-    E -->|Phase 3 bis 5| F[CLAUDE.md-Schichten im Repo]
+    E -->|Phase 3 bis 5| F[Anweisungen im Repo:<br/>Wurzel, Bereiche, Pfad-Regeln]
 
     F --> CS[create-specs]
     CS --> C
@@ -115,6 +115,8 @@ Freigegeben wird über die Beispielseite, nicht über eine Hex-Tabelle. Eine Pal
 ### Phasen 3 bis 5: Bereiche, Plan, Schreiben
 
 Bereichskarte aus dem Stack ableiten, Plan vorlegen, nach Freigabe schreiben.
+
+Die erzeugten Anweisungen sind danach getrennt, **wann sie in den Kontext geladen werden**: die Wurzel in jeder Sitzung, eine Bereichsdatei beim Arbeiten in ihrem Verzeichnis, eine Regel mit `paths:` beim Berühren eines passenden Pfads. Eine Regel ohne `paths:` lädt wie die Wurzel, ist also keine eigene Ebene, sondern nur ein anderer Ort für dieselbe Ebene.
 
 **Ergebnis:** Wurzel-`CLAUDE.md`, Bereichs-`CLAUDE.md` je Bereich, `.claude/rules/` mit `paths:`-Frontmatter, und die Wissensbasis-Tabelle, die auf den Vault zeigt.
 

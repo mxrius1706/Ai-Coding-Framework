@@ -7,7 +7,7 @@ description: Set up the Claude Code configuration for a project from scratch - t
 
 Build the configuration layer a project needs so that every later session starts informed instead of guessing.
 
-The output is not one file. It is a structure of three layers plus an external knowledge base, and the value comes from putting each statement in exactly one place.
+The output is not one file. It is a set of instructions separated by **when they load into the context window**, plus a knowledge base outside the repository. The value comes from putting each statement in exactly one place, and the separation is what makes that possible: a rule that only matters in one corner of the codebase does not have to be paid for in every session.
 
 ## The idea in one paragraph
 
