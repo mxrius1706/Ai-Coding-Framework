@@ -63,15 +63,15 @@ flowchart TD
     H --> I[Hooks: Typen, Lint, Tests]
     I --> H
     H --> J[Gates: Review + Qualitätsprüfung]
-    J --> K[Rückfluss in die Specs]
+    J --> K[Rückfluss: write-spec]
     K --> D
     J --> L[Wiederkehrende Muster in CLAUDE.md]
     L --> F
 
-    F --> M[config-sync]
+    J --> M[Rückfluss: config-sync]
     M --> F
-    D --> M
     H --> M
+    D --> M
 
     N[Session-Ende: session-recap] --> O[(.claude/state.md)]
     E -->|Phase 0| RM[(roadmap.md)]
@@ -264,11 +264,42 @@ Push erst nach ausdrücklicher Freigabe.
 
 ### 7. Rückfluss
 
-Was gebaut wurde, wird in die Specs nachgezogen. Das Review liefert die Liste dafür selbst: Es findet regelmäßig Stellen, an denen **die Spec** das Problem ist und nicht der Code, und sammelt sie in einem eigenen Abschnitt „Spec-Rückfluss". Ohne den gehen diese Funde verloren, weil der Bericht sonst nur Code bewertet. Nachgezogen wird über `write-spec`, nicht im Review selbst.
+**Skills:** `write-spec` für die Specs, `config-sync` für die Konfiguration
+
+Der Rückfluss hat zwei Empfänger. Gebaut wurde etwas, das beide betrifft: die Specs beschreiben das Soll, die Konfiguration behauptet Dinge über den Ist-Stand, und beide sind nach einer Phase ein Stück falsch.
+
+**In die Specs.** Was gebaut wurde, wird nachgezogen. Das Review liefert die Liste dafür selbst: Es findet regelmäßig Stellen, an denen **die Spec** das Problem ist und nicht der Code, und sammelt sie in einem eigenen Abschnitt „Spec-Rückfluss". Ohne den gehen diese Funde verloren, weil der Bericht sonst nur Code bewertet. Nachgezogen wird über `write-spec`, nicht im Review selbst.
 
 Muster, die im Review **zweimal** aufgetaucht sind, wandern in den Abschnitt für bekannte Schwachstellen der Wurzel-`CLAUDE.md`. Einmal ist ein Vorfall, zweimal ist ein Muster.
 
 Das ist die Stelle, an der aus einem Fehler eine Regel wird. Ohne sie wiederholt sich derselbe Fehler, bis jemand ihn zufällig erinnert.
+
+**In die Konfiguration.** Die Konfiguration ist **Anweisung an ein Modell**, nicht Dokumentation für Menschen. Eine falsche Zeile darin erzeugt falschen Code, und zwar wiederholt und leise, weil sie als Wahrheit gelesen wird. Genau deshalb wird sie geprüft, nicht weil sie hübsch sein soll.
+
+Geprüft wird jede Aussage gegen **ihre eigene** Autorität, nicht alles gegen eine:
+
+| Art der Aussage | Zuständig |
+|---|---|
+| Ist-Stand: „die Funktion heißt X", „das Feld existiert" | **Der Code.** Nachsehen, nie erinnern, und nie eine Spec dafür lesen |
+| Entscheidung: „wir nutzen Y nicht mehr" | **Die Entscheidungsdokumente** |
+| Produkt: Zielgruppe, Umfang, bewusste Nicht-Ziele | **Die Produktdefinition** |
+| Verweis nach außen: Pfad in der Wissensbasis, Werkzeugname, verlinkte Datei | **Das Verwiesene selbst.** Nachsehen, ob es existiert |
+
+Die Prüffrage, wenn unklar ist, welche Autorität greift: *Könnte ich das durch Hinschauen widerlegen?* Wenn ja, wird hingeschaut.
+
+Die vierte Zeile ist die, die am leichtesten vergessen wird, und sie ist teuer. Ein Verweis auf eine Notiz in der Wissensbasis, auf ein Werkzeug eines MCP-Servers oder auf eine andere Regeldatei wird beim Schreiben nicht geprüft und altert danach still. Er fällt auch nicht auf, wenn er bricht: die Sitzung sucht, findet nichts, und arbeitet mit weniger weiter, als sie hätte haben können. Wer nur Code, Entscheidungen und Produkt prüft, findet diese Klasse nie, weil sie in keine der drei fällt.
+
+Bei Werkzeugnamen kommt eine Fußangel dazu: es zählt nur, was der **laufende** Server anbietet. Zwei Server können denselben konfigurierten Namen tragen, während nur einer verbunden ist, und ihre Werkzeuge heißen unterschiedlich. Eine Regel, die dann ein Werkzeug vorschreibt, das es auf dem laufenden Server nicht gibt, ist schlimmer als gar keine Regel.
+
+**Wann der Lauf fällig ist**, nach derselben Regel wie bei `spec-consistency`: bei einer Änderung an dem, wovon die Konfiguration abhängt, nicht nach einem Takt.
+
+- **Am Phasenende**, nach den Reviews und vor der Freigabe. Der Hauptfall: eine Phase ändert Code, und Code ist die Autorität für die größte Klasse von Behauptungen. Nach den Reviews, weil die noch Code ändern; vor der Freigabe, damit die Drift in demselben Bericht steht, über den entschieden wird.
+- **Bei einer geänderten Entscheidung**, gezielt über die Dateien, die sie zitieren. Billig und ergiebig, wie bei den Specs.
+- **Wenn ein Verweisziel umzieht.** Wissensbasis umstrukturiert, Regeldatei umbenannt, MCP-Server getauscht. Hängt an keiner Phase und wird von keinem Bauschritt ausgelöst.
+
+**Nicht** vor einer Bauphase. Konfiguration gegen Code zu korrigieren, der in den nächsten Tagen umgebaut wird, erzeugt Arbeit, die die Phase sofort wieder entwertet.
+
+Dieser Schritt schließt den Kreis. Ohne ihn ist alles davor eine Einbahnstraße: Konfiguration entsteht einmal und driftet danach still von dem weg, was tatsächlich gebaut wurde.
 
 ---
 
@@ -294,28 +325,7 @@ Als Nächstes trägt in beiden eine Handlung, keinen Phasennamen. Specs schreibe
 
 ## Laufend
 
-### 9. Konfiguration gegen die Wirklichkeit
-
-**Skill:** `config-sync` *(fehlt noch, siehe unten)*
-
-Prüft die Konfiguration gegen ihre jeweilige Autorität und zieht Abweichungen nach. Die Zuständigkeit hängt von der Art der Aussage ab:
-
-| Art der Aussage | Zuständig |
-|---|---|
-| Ist-Stand: „die Funktion heißt X", „das Feld existiert" | **Der Code.** Nachsehen, nie erinnern |
-| Entscheidung: „wir nutzen Y nicht mehr" | **Die Entscheidungsdokumente** |
-| Produkt: Zielgruppe, Umfang, bewusste Nicht-Ziele | **Das PRD** |
-| Verweis nach außen: Vault-Pfad, Werkzeugname, verlinkte Datei | **Das Verwiesene selbst.** Nachsehen, ob es existiert |
-
-Die Prüffrage, wenn unklar ist, welche Autorität greift: *Könnte ich das durch Hinschauen widerlegen?* Wenn ja, wird hingeschaut.
-
-Die vierte Zeile ist die, die am leichtesten vergessen wird, und sie ist teuer. Ein Verweis auf eine Notiz im Vault, auf ein Werkzeug eines MCP-Servers oder auf eine Datei in einer anderen Regel wird beim Schreiben nicht geprüft und altert danach still. Er fällt auch nicht auf, wenn er bricht: die Sitzung sucht, findet nichts, und arbeitet mit weniger weiter, als sie hätte haben können. Wer nur Code, Entscheidungen und Produkt prüft, findet diese Klasse nie, weil sie in keine der drei fällt.
-
-Bei Werkzeugnamen kommt eine Fußangel dazu: es zählt nur, was der **laufende** Server anbietet. Zwei Server können denselben konfigurierten Namen tragen, während nur einer verbunden ist, und ihre Werkzeuge heißen unterschiedlich. Eine Regel, die dann ein Werkzeug vorschreibt, das es auf dem laufenden Server nicht gibt, ist schlimmer als gar keine Regel.
-
-Dieser Schritt schließt den Kreis. Ohne ihn ist alles davor eine Einbahnstraße: Konfiguration entsteht einmal und driftet danach still von dem weg, was tatsächlich gebaut wurde.
-
-### 10. Werkzeuge verbessern
+### 9. Werkzeuge verbessern
 
 **Skill:** `skill-creator`
 
@@ -349,7 +359,7 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | `grill-me` → `grilling` | Interview-Verfahren | vorhanden |
 | `project-init` | Konfiguration aufbauen | vorhanden |
 | `skill-creator` | Skills bauen und messen | vorhanden |
-| `config-sync` | Konfiguration gegen Code korrigieren | **fehlt** |
+| `config-sync` | Konfiguration gegen ihre vier Autoritäten prüfen und nachziehen | vorhanden |
 | Fahrplan als Statusquelle | `templates/roadmap.md`, vorbefüllt, in Phase 0 kopiert | vorhanden |
 | Übergabe + Hooks | `.claude/state.md`; Hook injiziert Fahrplan und Übergabe | vorhanden |
 | `session-recap` + Hook | Handoff am Sitzungsende, Abschiedsformeln als Auslöser | vorhanden |
@@ -360,4 +370,4 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | Wartbarkeitsreview | Zweites, getrenntes Gate | **fehlt** |
 | Weitere Hooks | Sofortprüfung nach Edits | **fehlt** |
 
-Was heute steht, trägt den Weg von der Idee bis zum Ende einer Bauphase. Was fehlt, ist der Rückweg: `config-sync`, der die Konfiguration gegen den gebauten Code korrigiert, das zweite Review-Gate für Wartbarkeit, und die Hooks, die während des Bauens sofort prüfen.
+Was heute steht, trägt den ganzen Weg von der Idee bis zum Ende einer Bauphase und wieder zurück in die Konfiguration. Der Kreis ist damit geschlossen. Offen sind das zweite Review-Gate für Wartbarkeit und die Hooks, die während des Bauens sofort prüfen.

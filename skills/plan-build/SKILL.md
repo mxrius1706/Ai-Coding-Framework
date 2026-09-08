@@ -96,7 +96,8 @@ Write the procedure once, at the top, and state that it holds for every phase wi
 7. **Tests** per the project's rules, `testing`.
 8. **The gate**, item by item.
 9. **Review** via `review-changes` over the whole phase diff, findings fixed, then checked again.
-10. **Release.** The report goes to the user; pushing and the next phase wait for an explicit go.
+10. **Pull the configuration back into line** via `config-sync`. After the review, because the review still changes code; before the release, so the drift is in the same report the user decides on.
+11. **Release.** The report goes to the user; pushing and the next phase wait for an explicit go.
 
 Adjust the steps to what the project actually has, and leave out what it does not. What must not happen is a step naming a skill that does not exist: a dangling reference in the ritual is read as a working instruction and fails silently the first time someone follows it.
 
