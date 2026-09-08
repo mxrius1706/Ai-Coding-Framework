@@ -1,8 +1,9 @@
-"""SessionStart hook: injiziert den Projektstand in jede neue Sitzung.
+"""SessionStart hook: injiziert die Uebergabe der letzten Sitzung.
 
-Liest `.claude/state.md` im Projekt und gibt sie als zusaetzlichen Kontext
-zurueck. Die Datei traegt oben den Loop-Stand (wo stehen wir im Ablauf) und
-darunter die Uebergabe der letzten Sitzung.
+Liest `.claude/state.md` und gibt sie als zusaetzlichen Kontext zurueck,
+zusammen mit dem Hinweis, den Fahrplan zu lesen. Der Fahrplan liegt in der
+Wissensbasis ausserhalb des Repos und ist die Quelle fuer "wo stehen wir";
+diese Datei sagt nur, was letzte Sitzung passiert ist.
 
 Registrierung in `.claude/settings.json`:
 

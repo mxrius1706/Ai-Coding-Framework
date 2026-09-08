@@ -78,6 +78,6 @@ Return the settled decisions and the open `TBD` items. Phase 3 derives the area 
 
 ## Before finishing
 
-Update `.claude/state.md`: mark the stack as settled in the table, and set the next step to whatever actually comes next. That file is the only thing that survives the session, and one nobody updates is wrong within two weeks.
+Update the roadmap in the knowledge base: mark the stack step, and set the next action to whatever actually comes next. The roadmap is the one place that answers where the project stands, and one nobody updates is wrong within two weeks.
 
-If decisions were left open, say so there rather than marking the phase done. A phase marked complete that was not is worse than one marked open, because the next session stops asking.
+If decisions were left open, say so there rather than marking the step done. A step marked complete that was not is worse than one marked open, because the next session stops asking.

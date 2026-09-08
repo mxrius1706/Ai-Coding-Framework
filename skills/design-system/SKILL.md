@@ -103,4 +103,4 @@ Runs after the stack is settled, because the token format depends on it. Return 
 
 ## Before finishing
 
-Update `.claude/state.md`: mark the design system in the table, name where the token file lives, and set the next step. A half-finished design system belongs there as such, with what is missing, not as done.
+Update the roadmap in the knowledge base: mark the design system step, note where the token file lives, and set the next action. A half-finished design system belongs there as such, with what is missing, not as done.

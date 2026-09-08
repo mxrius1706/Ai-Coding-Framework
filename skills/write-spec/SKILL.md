@@ -227,4 +227,6 @@ in the form "only once X, then Y".>
 
 ## Before finishing
 
-Update `.claude/state.md`: raise the written count, and set the next step to the next document in the writing order. Where this spec produced ripple effects that oblige another document to change, name that as the next step instead, so a correction that is owed does not sink beneath the next new spec.
+Update the spec index with this document's status, then the roadmap in the knowledge base: raise the written count and set the next action to the next document in the writing order. The index owns the per-spec status, the roadmap only points at it; on a disagreement the index wins.
+
+Where this spec produced ripple effects that oblige another document to change, name that as the next action instead, so a correction that is owed does not sink beneath the next new spec.

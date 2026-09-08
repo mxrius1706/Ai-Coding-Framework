@@ -62,13 +62,17 @@ A REST-based alternative exists that talks to a running Obsidian instance throug
 <Vault>/
   <Project>/
     PRD.md              product truth, the binding definition
-    roadmap.md          build order, phases, status per phase
+    roadmap.md          where the project stands, initialised with the steps ahead
     specs/
       _index.md         one line per spec with its status
       decisions/        one file per architecture decision
 ```
 
 Keep it this shallow at the start. Depth earns its way in later. Invented hierarchy only makes things hard to find.
+
+**Initialise the roadmap immediately**, before the product definition exists, with the steps ahead marked as unstarted. It is the file that answers "where are we", and it answers it from the first session rather than from the day someone remembers to create it. **Read `references/roadmap.md` for the shape and the rules that keep it honest.**
+
+It starts as the setup process and grows into the build plan. Same document, two stages of a project's life, which is why it exists this early.
 
 ---
 
@@ -179,6 +183,10 @@ Sections in this order. Omit any that has nothing true to say, because an empty 
 
 **Knowledge base map.** A table from question type to vault location: product questions to the PRD, decisions to `specs/decisions/`, technical detail to the relevant spec. This table is what stops a later session from creating a local copy of something that already exists in the vault.
 
+**Where the project stands.** Name the roadmap explicitly as the single place that answers it, with its path, and state the obligation that goes with it: **it is updated whenever a step completes, by whoever completed it.** Both halves are needed. Without the pointer a session has no reason to look and will ask instead. Without the obligation the file becomes a diary of the first week that everything afterwards quietly contradicts.
+
+This is one of the few places where a short instruction earns its permanent context cost, because it is read at the start of every session and decides whether the session begins informed or guessing.
+
 **Phrase routing.** One table mapping what the user says to the skill that should run. The only routing table in the project. See below.
 
 **Known weak spots.** Start empty, with a note that reviews fill it once a pattern has appeared twice. An empty section with a stated filling rule is honest. A pre-filled one is invention.
@@ -211,11 +219,11 @@ Rules also suit anything that applies across scattered paths, where an area file
 
 Create one only when there is real content for it. An empty rule file is a promise that will not be kept.
 
-### The state file and the hook that injects it
+### The handoff file and the hooks
 
 Everything above spans far more than one session. The product interview, the stack, the design system, the component map and then one spec per component is weeks of work, and each session starts with an empty context window.
 
-So create `.claude/state.md`, carrying where the project stands at the top and the last session's handoff below, and register a SessionStart hook that injects it. **Read `references/state-file.md` for the shape and the rules about who writes which half.**
+Two files carry across that gap, and they answer different questions. The **roadmap** in the knowledge base says where the project stands and what comes next. `.claude/state.md` says what happened in the last session. **Read `references/roadmap.md` and `references/state-file.md`;** the division between them is the point and collapsing it destroys both.
 
 The hook is what makes this reliable. An instruction in a `CLAUDE.md` asking the model to read a file first is a request; a hook runs regardless. The framework ships two for this, both copied to `.claude/hooks/` and registered:
 
@@ -224,7 +232,7 @@ The hook is what makes this reliable. An instruction in a `CLAUDE.md` asking the
 
 A phrase hook fires on every prompt, so its patterns have to be unambiguous. The test for one: could this sentence be said mid-work without meaning what the hook assumes? If yes, it does not belong in the list. A hook triggering on everyday words fires constantly, is almost always wrong, and devalues the skill it forces, because that skill then runs whether or not it was wanted.
 
-Fill the state file in as the last act of writing, with every phase that has actually run marked done and a concrete next step spelled out. Not a phase name, an action: which document to write first and why.
+As the last act of writing, bring the roadmap up to date: every step that has actually run marked done, and a concrete next action spelled out. Not a phase name, an action, naming which document comes first and why.
 
 ### CLAUDE.local.md
 

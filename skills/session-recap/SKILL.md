@@ -11,22 +11,22 @@ This writes the handoff. It takes a minute and saves the next session twenty.
 
 ## Where it goes
 
-Into the lower half of `.claude/state.md`, below the separator. **Never overwrite the whole file.**
+Into `.claude/state.md`, overwritten each time. Only the last session is relevant.
 
-The upper half carries where the project stands in the process, is written by other skills as phases complete, and is durable. The lower half is this handoff, describes only the last session, and is overwritten each time. Replacing the file wholesale destroys the durable half, and nothing will tell you it happened.
+**It does not say where the project stands.** That is the roadmap's job, in the knowledge base, and writing it here too creates the second version that eventually disagrees with the first. The handoff answers *what happened last time*; the roadmap answers *where are we and what comes next*.
 
-If the file does not exist yet, create it with both halves, and fill the upper one from what is actually true rather than leaving it empty.
+## Check the roadmap before writing the handoff
 
-## Check the top before writing the bottom
+The end of a session is the moment the roadmap is most likely to be stale, because a step may have been completed by hand rather than through the skill that would have recorded it.
 
-The end of a session is the moment the upper half is most likely to be stale, because a phase may have been completed by hand rather than through the skill that would have recorded it.
+So read it, compare it against what actually happened, and correct it if it is wrong. This is the cheapest opportunity to catch it drifting, and a roadmap that has drifted is worse than none, because the next session believes it.
 
-So read it, compare against what happened, and correct it if it is wrong. This is the cheapest opportunity to catch a state file drifting, and a state file that has drifted is worse than none, because the next session believes it.
+Correcting the roadmap is part of finishing a session, not an optional extra. If the session completed a step, the roadmap says so before the handoff is written.
 
 ## Format
 
 ```
-## Letzte Sitzung <date> · <branch>
+# Letzte Sitzung <date> · <branch>
 
 Ziel: <one sentence>
 
@@ -53,7 +53,7 @@ Write it in the project's documentation language, which the project configuratio
 
 **Omit empty sections.** A "Decided: nothing" line costs attention and carries nothing.
 
-**Overwrite the lower half, do not append.** Only the last session is relevant. A growing log buries the current state under history, and history lives in the version control system.
+**Overwrite, do not append.** Only the last session is relevant. A growing log buries the present under history, and history is what the version control system is for.
 
 **Where a correction is owed, that is the next step.** Something noticed but not fixed outranks the next new piece of work, otherwise it sinks and resurfaces as a bug.
 

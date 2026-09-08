@@ -107,4 +107,4 @@ For an interface, the screens are their own planning step. Which pages exist is 
 
 ## Before finishing
 
-Update `.claude/state.md`: mark the component map as done, record how many specs are planned and how many are written, and set the next step to the **first document in the writing order, with the reason**. "Write specs" tells the next session nothing. "Start with the entity model, everything else references it" tells it where to begin and why.
+Update the roadmap in the knowledge base: mark the component map done, record how many specs are planned, and set the next action to the **first document in the writing order, with the reason**. "Write specs" tells the next session nothing. "Start with the entity model, everything else references it" tells it where to begin and why.
