@@ -1,5 +1,57 @@
 # AI-Coding-Framework
 
-Baukasten für die Arbeit mit Claude Code: Skills, Commands, Hooks und CLAUDE.md-Konventionen, die zusammen einen geschlossenen Kreislauf bilden.
+Ein Baukasten für die Arbeit mit Claude Code: Skills, die von der Produktidee bis zur laufend korrigierten Projektkonfiguration ineinandergreifen.
 
-Gerade im Aufbau.
+Der Ausgangspunkt ist eine Beobachtung. Ein Agent, der bei jeder Sitzung bei null anfängt, ist ein teurer Praktikant. Er stellt dieselben Fragen, trifft dieselben Entscheidungen neu und macht denselben Fehler ein zweites Mal. Was fehlt, ist nicht ein besseres Modell, sondern eine Struktur, in der Wissen liegen bleibt und sich selbst korrigiert.
+
+**Wie die Teile zusammenspielen, steht in [LOOP.md](LOOP.md).**
+
+## Was drin ist
+
+| Skill | Wozu |
+|---|---|
+| `prd` | Produkt spezifizieren. Führt vorher ein Interview, statt Absichten aufzuschreiben |
+| `grill-me` → `grilling` | Das Interview-Verfahren. Entscheidungsbaum in Runden, bis keine Verzweigung offen ist |
+| `project-init` | Wissensbasis, Stack-Interview und die CLAUDE.md-Schichten eines Projekts aufbauen |
+| `skill-creator` | Skills bauen, verbessern und ihre Trefferquote messen |
+
+Der Kreislauf ist noch nicht geschlossen. Die Tabelle am Ende von [LOOP.md](LOOP.md) sagt, was fehlt.
+
+## Voraussetzungen
+
+- [Claude Code](https://claude.com/claude-code)
+- Ein Obsidian-MCP-Server für die Wissensbasis. `project-init` führt durch die Einrichtung, falls noch keiner läuft
+- Python 3 mit `pyyaml`, nur für die Prüf- und Messskripte von `skill-creator`
+
+## Installation
+
+Global, für alle Projekte:
+
+```bash
+git clone https://github.com/mxrius1706/Ai-Coding-Framework.git
+cp -r Ai-Coding-Framework/skills/* ~/.claude/skills/
+```
+
+Oder projektlokal, dann nach `.claude/skills/` statt `~/.claude/skills/`.
+
+Prüfen, ob es angekommen ist: in Claude Code `/project-init` tippen. Erscheint der Skill nicht, hilft ein Neustart der Sitzung.
+
+## Loslegen
+
+Im leeren Projektordner:
+
+```
+Neues Projekt aufsetzen
+```
+
+`project-init` übernimmt von dort: erst die Wissensbasis, dann das PRD, dann ein eigenes Interview über den Stack, dann ein Plan zur Freigabe. Geschrieben wird erst danach.
+
+## Zwei Regeln, die alles zusammenhalten
+
+**Eine Wahrheit, ein Ort.** Keine Aussage steht in zwei Dateien. Wo eine zweite sie braucht, verweist sie. Zwei Kopien einer Regel werden irgendwann uneins, und dann folgt die Arbeit der falschen.
+
+**Bestand mit Ablaufdatum.** Was noch läuft, aber abgelöst wird, sagt das in seinem eigenen Dokument: was heute gilt, was es ersetzt und worauf nicht mehr aufgebaut werden darf.
+
+## Herkunft
+
+Der Baukasten enthält fremde Skills, teils angepasst. Quellen, Lizenzen und die vorgenommenen Änderungen stehen in [CREDITS.md](CREDITS.md).
