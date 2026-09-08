@@ -24,14 +24,14 @@ Wer diese drei vermischt, bekommt Dokumentation, die verrottet. Sie zu trennen i
 
 ```mermaid
 flowchart TD
-    A[Produktidee] --> B[prd]
+    A[Produktidee] --> E[project-init]
+    E -->|Phase 0| D[(Vault anlegen)]
+    E -->|Phase 1| B[prd]
     B --> C[grill-me → grilling]
     C --> B
-    B --> D[(Vault: PRD, specs, decisions)]
-
-    D --> E[project-init]
-    E --> C
-    E --> F[CLAUDE.md-Schichten im Repo]
+    B --> D
+    E -->|Phase 2: Stack| C
+    E -->|Phase 3 bis 5| F[CLAUDE.md-Schichten im Repo]
 
     F --> G[Bauabschnitt: Plan → Freigabe → Branch]
     G --> H[Bauen]
@@ -62,33 +62,37 @@ flowchart TD
 
 ## Einmalig, beim Projektstart
 
-### 1. Wissensbasis anlegen
+Hier läuft **ein** Skill: `project-init`. Er ist der Einstiegspunkt und holt sich die anderen von innen dazu. Die Phasen unten sind seine Phasen, keine getrennten Aufrufe.
 
-**Skill:** `project-init`, Phase 0
+### Phase 0: Wissensbasis
 
-Vor allem anderen. Das PRD braucht einen Ort, der nicht das Repo ist. Prüft, ob ein Obsidian-MCP verfügbar ist, führt sonst durch die Einrichtung, und legt die Vault-Struktur an: `PRD.md`, `roadmap.md`, `specs/_index.md`, `specs/decisions/`.
+Vor allem anderen, auch vor dem PRD. Prüft, ob ein Obsidian-MCP verfügbar ist, führt sonst durch die Einrichtung, und legt die Vault-Struktur an: `PRD.md`, `roadmap.md`, `specs/_index.md`, `specs/decisions/`.
 
-Der Grund für die Reihenfolge: Produktwahrheit im Repo ist eine Falle. Sie hängt an einem Branch, wird irgendwann der Bequemlichkeit halber ein zweites Mal abgelegt, und ein halbes Jahr später widersprechen sich zwei Fassungen und niemand weiß, welche gilt.
+Warum das zuerst kommt: Das PRD braucht einen Ort, bevor es geschrieben wird. Wer es erst erzeugt und danach überlegt, wohin damit, legt es im Repo ab. Dort hängt es an einem Branch, wird irgendwann der Bequemlichkeit halber ein zweites Mal abgelegt, und ein halbes Jahr später widersprechen sich zwei Fassungen und niemand weiß, welche gilt.
 
-### 2. Produkt spezifizieren
+### Phase 1: Produkt
 
-**Skill:** `prd`, der `grill-me` aufruft, das wiederum `grilling` ausführt
+Ist ein PRD da, wird es gelesen. Ist keins da, ruft `project-init` den **`prd`**-Skill auf, der wiederum **`grill-me`** zieht, das **`grilling`** ausführt.
 
-Kein PRD ohne Interview. `grilling` arbeitet einen Entscheidungsbaum in Runden ab: pro Runde alle Fragen, deren Voraussetzungen geklärt sind, jeweils mit einer Empfehlung. Fakten beschafft der Agent selbst, Entscheidungen trifft der Nutzer. Fertig ist es, wenn keine offene Verzweigung mehr übrig ist.
+`grilling` arbeitet einen Entscheidungsbaum in Runden ab: pro Runde alle Fragen, deren Voraussetzungen geklärt sind, jeweils mit einer Empfehlung. Fakten beschafft der Agent selbst, Entscheidungen trifft der Nutzer. Fertig ist es, wenn keine offene Verzweigung mehr übrig ist.
 
-Ohne dieses Interview wird ein PRD zu dem, was der Skill selbst „aspirational fiction" nennt: plausibel klingende Absichten ohne belastbare Aussage.
+Ohne dieses Interview wird ein PRD zu dem, was der `prd`-Skill selbst „aspirational fiction" nennt: plausibel klingende Absichten ohne belastbare Aussage.
 
-**Ergebnis:** PRD im Vault. Nicht im Repo.
+**Ergebnis:** PRD im Vault, nicht im Repo. Liegt ein vorhandenes PRD woanders, wandert es in den Vault, statt dass eine zweite Fassung entsteht.
 
-### 3. Konfiguration aufbauen
+### Phase 2: Stack
 
-**Skill:** `project-init`, Phasen 1 bis 5
+Ein **eigenes** Interview, wieder über `grill-me`, getrennt vom Produktgespräch.
 
-Liest das PRD, führt ein **eigenes** Interview über den Stack, leitet daraus die Bereichskarte ab, legt einen Plan vor und schreibt erst nach Freigabe.
+Der Grund für die Trennung: Das PRD sagt nichts über die Technik und markiert einen unbestimmten Stack selbst als `TBD`. Regeln für einen Stack, den niemand gewählt hat, lesen sich wie richtige Regeln und werden befolgt. Nur bestätigte Technologie erzeugt technische Regeln, alles andere bleibt `TBD` mit dem Hinweis, was es klären würde.
 
-Warum Stack und Produkt getrennt erfragt werden: Das PRD sagt nichts über die Technik und markiert einen unbestimmten Stack selbst als `TBD`. Regeln für einen Stack, den niemand gewählt hat, lesen sich wie richtige Regeln und werden befolgt. Nur bestätigte Technologie erzeugt technische Regeln, alles andere bleibt `TBD` mit dem Hinweis, was es klären würde.
+### Phasen 3 bis 5: Bereiche, Plan, Schreiben
+
+Bereichskarte aus dem Stack ableiten, Plan vorlegen, nach Freigabe schreiben.
 
 **Ergebnis:** Wurzel-`CLAUDE.md`, Bereichs-`CLAUDE.md` je Bereich, `.claude/references/`, und die Wissensbasis-Tabelle, die auf den Vault zeigt.
+
+> **Einzeln aufrufbar bleibt alles trotzdem.** Wer nur ein PRD will, ruft `prd` direkt auf. `project-init` findet ein bestehendes PRD und setzt darauf auf, statt es neu zu erfragen.
 
 ---
 

@@ -74,9 +74,11 @@ Keep it this shallow at the start. Depth earns its way in later. Invented hierar
 
 ## Phase 1: PRD
 
-If a PRD exists, read it. If not, invoke the `prd` skill, which runs a proper interview through `grill-me` before writing anything.
+If no PRD exists, invoke the `prd` skill, which runs a proper interview through `grill-me` before writing anything. Write the result into the vault.
 
-Write the result into the vault, never into the repository.
+If a PRD already exists, read it, and check where it lives. A PRD sitting in the repository or in a stray folder gets **moved** into the vault, not copied. Someone may have run `prd` on its own before starting here, which is fine, but leaving the file where it landed while referencing a vault path is how a project ends up with two versions that slowly disagree. Move it, confirm the move with the user, and reference only the new location from then on.
+
+Either way, the repository never holds a copy of the PRD.
 
 The PRD supplies the product section of the configuration and, above all, the non-goals. Non-goals are the sharpest thing in a PRD: they are the only part that tells a future session what not to build, and they belong in the root configuration almost verbatim.
 
