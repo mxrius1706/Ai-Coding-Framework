@@ -104,3 +104,7 @@ Write links with the full path the knowledge base resolves unambiguously, not a 
 Each component is then written individually, against this map and against the code, and the index is updated as each one lands. When enough are written to see the whole, the build order can be derived from them, which is a different question from the writing order settled here: writing order follows what references what, build order follows what delivers value first.
 
 For an interface, the screens are their own planning step. Which pages exist is a product conversation, not something derived from the component map, and it comes after the components stand.
+
+## Before finishing
+
+Update `.claude/state.md`: mark the component map as done, record how many specs are planned and how many are written, and set the next step to the **first document in the writing order, with the reason**. "Write specs" tells the next session nothing. "Start with the entity model, everything else references it" tells it where to begin and why.

@@ -211,6 +211,16 @@ Rules also suit anything that applies across scattered paths, where an area file
 
 Create one only when there is real content for it. An empty rule file is a promise that will not be kept.
 
+### The state file and the hook that injects it
+
+Everything above spans far more than one session. The product interview, the stack, the design system, the component map and then one spec per component is weeks of work, and each session starts with an empty context window.
+
+So create `.claude/state.md`, carrying where the project stands at the top and the last session's handoff below, and register a SessionStart hook that injects it. **Read `references/state-file.md` for the shape and the rules about who writes which half.**
+
+The hook is what makes this reliable. An instruction in a `CLAUDE.md` asking the model to read a file first is a request; a hook runs regardless. The framework ships `hooks/session-state.py` for this: copy it to `.claude/hooks/` and register it.
+
+Fill the state file in as the last act of writing, with every phase that has actually run marked done and a concrete next step spelled out. Not a phase name, an action: which document to write first and why.
+
 ### CLAUDE.local.md
 
 Anything personal to one developer, such as a sandbox URL or preferred test data, belongs in `CLAUDE.local.md` at the project root, added to `.gitignore`. Keeping it out of the shared file prevents one person's setup from becoming everyone's instruction.

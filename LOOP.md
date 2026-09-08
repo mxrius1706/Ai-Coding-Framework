@@ -181,11 +181,21 @@ Das ist die Stelle, an der aus einem Fehler eine Regel wird. Ohne sie wiederholt
 
 ## Je Session
 
-### 8. Übergabe
+### 8. Eine Datei, zwei Hälften
 
-Am Ende einer Sitzung wird ein Handoff geschrieben, beim Start der nächsten wieder eingelesen. Ausgelöst wird das über Abschiedsphrasen, nicht über einen Befehl, den man sich merken muss.
+`.claude/state.md` trägt beides, was eine Sitzung nicht überlebt, und ein SessionStart-Hook injiziert sie, bevor der erste Prompt kommt.
 
-Der Handoff ist konkret oder wertlos: Branch, Commit-Bereich, Testzahl, was als Nächstes ansteht und in welcher Reihenfolge. „Wir haben an X gearbeitet" hilft niemandem.
+**Oben der Loop-Stand, dauerhaft.** Eine Zeile „wo stehen wir, was kommt als Nächstes", darunter eine Tabelle mit den Schritten des Ablaufs. Geschrieben von dem Skill, der einen Schritt abgeschlossen hat, nicht von Hand. Ein Stand, den jemand pflegen muss, ist nach zwei Wochen falsch, und ein falscher Stand ist schlimmer als keiner, weil die nächste Sitzung ihm glaubt.
+
+**Unten die Übergabe, flüchtig.** Wird am Sitzungsende überschrieben und beschreibt nur die letzte. Darf lang und konkret sein.
+
+Die Trennung ist kein Schmuck. Wer beides mischt, begräbt das Dauerhafte unter dem Flüchtigen.
+
+Der Loop-Stand zählt vor allem, solange geplant und spezifiziert wird, denn das zieht sich über viele Sitzungen und die Reihenfolge ist nicht offensichtlich. Deshalb trägt „Als Nächstes" eine Handlung, keinen Phasennamen: „Specs schreiben" sagt nichts, „zuerst das Datenmodell, alles andere zeigt darauf" sagt, wo man anfängt und warum.
+
+Der Handoff ist konkret oder wertlos: Branch, Commit-Bereich, Testzahl, was ansteht und in welcher Reihenfolge. „Wir haben an X gearbeitet" hilft niemandem.
+
+*(Das Schreiben der Übergabe am Sitzungsende fehlt noch als eigener Baustein. Der Hook und die Datei stehen.)*
 
 ---
 
@@ -246,9 +256,10 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | `project-init` | Konfiguration aufbauen | vorhanden |
 | `skill-creator` | Skills bauen und messen | vorhanden |
 | `config-sync` | Konfiguration gegen Code korrigieren | **fehlt** |
-| Session-Übergabe | Handoff schreiben und einlesen | **fehlt** |
+| Projektstand-Datei + Hook | `.claude/state.md`, bei Sitzungsstart injiziert | vorhanden |
+| Übergabe schreiben | Handoff am Sitzungsende erzeugen | **fehlt** |
 | Änderungsreview | Gate vor dem Commit | **fehlt** |
 | Projektstand | offene Arbeit beantworten | **fehlt** |
-| Hooks | Sofortprüfung, Phrasen-Routing | **fehlt** |
+| Weitere Hooks | Sofortprüfung nach Edits, Phrasen-Routing | **fehlt** |
 
 Was heute steht, trägt die Schritte 1 bis 3: von der Idee zum Gerüst. Alles danach ist beschrieben, aber noch nicht gebaut.

@@ -8,10 +8,11 @@
 .credentials.json
 .mcp.local.json
 
-# Claude-Laufzeitdaten (lokal, projektspezifisch)
+# Claude: nur echt Persoenliches ignorieren.
+# .claude/state.md und .claude/plans/ gehoeren ins Repo - sie sind
+# Projekttatsachen, die fuer jeden gelten, der das Repo oeffnet.
 .claude/settings.local.json
-.claude/last-session.md
-.claude/plans/
+CLAUDE.local.md
 .claude/cache/
 
 # OS / Editor

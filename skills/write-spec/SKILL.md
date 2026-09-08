@@ -224,3 +224,7 @@ sentence each on why not.>
 <Positive and negative. Debt taken on. The trigger that would reopen this,
 in the form "only once X, then Y".>
 ```
+
+## Before finishing
+
+Update `.claude/state.md`: raise the written count, and set the next step to the next document in the writing order. Where this spec produced ripple effects that oblige another document to change, name that as the next step instead, so a correction that is owed does not sink beneath the next new spec.

@@ -19,6 +19,8 @@ Der Ausgangspunkt ist eine Beobachtung. Ein Agent, der bei jeder Sitzung bei nul
 | `project-init` | Der Einstiegspunkt. Wissensbasis, PRD, Stack, Bereiche und die CLAUDE.md-Schichten eines Projekts aufbauen |
 | `skill-creator` | Skills bauen, verbessern und ihre Trefferquote messen |
 
+Dazu `hooks/session-state.py`: ein SessionStart-Hook, der `.claude/state.md` in jede Sitzung injiziert. Die Datei trägt oben den Loop-Stand und darunter die Übergabe der letzten Sitzung, weil die Planungsphase über viele Sitzungen läuft und keine davon Kontext von der vorigen erbt.
+
 Der Kreislauf ist noch nicht geschlossen. Die Tabelle am Ende von [LOOP.md](LOOP.md) sagt, was fehlt.
 
 ## Voraussetzungen

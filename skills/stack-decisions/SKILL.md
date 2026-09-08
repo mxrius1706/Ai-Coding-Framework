@@ -75,3 +75,9 @@ Delete only when the thing is actually gone from the code. A trimmed document fo
 ## When called by project-init
 
 Return the settled decisions and the open `TBD` items. Phase 3 derives the area map from them, so a decision left vague here becomes a vague area file later.
+
+## Before finishing
+
+Update `.claude/state.md`: mark the stack as settled in the table, and set the next step to whatever actually comes next. That file is the only thing that survives the session, and one nobody updates is wrong within two weeks.
+
+If decisions were left open, say so there rather than marking the phase done. A phase marked complete that was not is worse than one marked open, because the next session stops asking.

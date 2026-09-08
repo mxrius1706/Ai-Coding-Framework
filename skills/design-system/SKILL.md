@@ -100,3 +100,7 @@ When something is being replaced, the old value does not simply vanish from the 
 ## When called by project-init
 
 Runs after the stack is settled, because the token format depends on it. Return the direction, the token file location and any open `TBD`, so the area map can decide whether the interface deserves its own instructions and what they should point at.
+
+## Before finishing
+
+Update `.claude/state.md`: mark the design system in the table, name where the token file lives, and set the next step. A half-finished design system belongs there as such, with what is missing, not as done.
