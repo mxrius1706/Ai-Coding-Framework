@@ -188,11 +188,13 @@ Das ist die Stelle, an der aus einem Fehler eine Regel wird. Ohne sie wiederholt
 
 ### 8. Zwei Fragen, zwei Dateien
 
-**Wo stehen wir und was kommt als Nächstes** beantwortet der **Fahrplan** (`roadmap.md`) in der Wissensbasis. Er wird in Phase 0 angelegt, noch bevor das PRD existiert, und trägt zunächst genau den Ablauf dieses Baukastens als Schrittliste. Später wachsen die Bauphasen hinein, abgeleitet aus den fertigen Specs. Ein Dokument, zwei Lebensabschnitte eines Projekts, nicht zwei Dokumente.
+**Wo stehen wir und was kommt als Nächstes** beantwortet der **Fahrplan** (`roadmap.md`) in der Wissensbasis. Er wird in Phase 0 aus `templates/roadmap.md` kopiert, noch bevor das PRD existiert, und trägt den Ablauf dieses Baukastens bereits ausgefüllt: die Schritte, den Skill je Schritt, und die Regeln, die ihn ehrlich halten. Später wachsen die Bauphasen hinein, abgeleitet aus den fertigen Specs. Ein Dokument, zwei Lebensabschnitte eines Projekts, nicht zwei Dokumente.
 
 Gepflegt wird er von den Skills selbst: wer einen Schritt abschließt, trägt ihn ein. Und die Wurzel-`CLAUDE.md` nennt ihn ausdrücklich als **den** Ort für den Status, samt der Pflicht, ihn aktuell zu halten. Beides ist nötig. Ohne den Verweis schaut niemand hin, ohne die Pflicht wird er zum Tagebuch der ersten Woche.
 
-**Was war letzte Sitzung** beantwortet `.claude/state.md` im Repo, geschrieben von `session-recap`, injiziert von `session-state.py`.
+**Was war letzte Sitzung** beantwortet `.claude/state.md` im Repo, geschrieben von `session-recap`.
+
+Beide werden vom SessionStart-Hook **injiziert**, nicht nur erwähnt, samt der Anweisung, die Sitzung mit Standort und Vorschlag zu eröffnen statt auf eine Frage zu warten. Eine Anweisung, eine Datei zu lesen, ist eine Bitte; injizierter Inhalt liegt einfach da. Der Fahrplan lebt außerhalb des Repos, deshalb schreibt `project-init` seinen Pfad beim Installieren nach `.claude/roadmap-path`.
 
 Die Trennung ist der Punkt. Der Fahrplan ändert sich selten, die Übergabe jedes Mal. Wer beides mischt, begräbt das Dauerhafte unter dem Flüchtigen. Und der Fahrplan fasst nichts zusammen, was anderen gehört: der Spec-Index besitzt den Status je Spec, der Fahrplan zeigt nur darauf, und beim Widerspruch gewinnt der Index.
 
@@ -257,8 +259,8 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | `project-init` | Konfiguration aufbauen | vorhanden |
 | `skill-creator` | Skills bauen und messen | vorhanden |
 | `config-sync` | Konfiguration gegen Code korrigieren | **fehlt** |
-| Fahrplan als Statusquelle | `roadmap.md`, in Phase 0 mit dem Ablauf initialisiert | vorhanden |
-| Übergabe-Datei + Hook | `.claude/state.md`, bei Sitzungsstart injiziert | vorhanden |
+| Fahrplan als Statusquelle | `templates/roadmap.md`, vorbefüllt, in Phase 0 kopiert | vorhanden |
+| Übergabe + Hooks | `.claude/state.md`; Hook injiziert Fahrplan und Übergabe | vorhanden |
 | `session-recap` + Hook | Handoff am Sitzungsende, Abschiedsformeln als Auslöser | vorhanden |
 | Änderungsreview | Gate vor dem Commit | **fehlt** |
 | Projektstand | offene Arbeit beantworten | **fehlt** |

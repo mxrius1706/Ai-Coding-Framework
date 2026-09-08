@@ -4,37 +4,13 @@
 
 It starts as the setup process and grows into the build plan. Those are the same document at two stages of a project's life, not two documents, which is why it is created at the very beginning rather than once building starts.
 
-## Initialised with the process
+## Shipped filled in
 
-Created in phase 0, before the product definition exists, holding the steps ahead as unstarted. A project's first session then already knows what the path looks like.
+The framework ships the roadmap at `templates/roadmap.md`, already carrying the steps, the skill that performs each one and the rules below. Copy it in during phase 0 and adjust only what is project-specific. Composing it fresh each time invites variation where there is no reason for any.
 
-```markdown
-# Fahrplan
+It is copied in **before the product definition exists**, so a project's very first session already knows what the path looks like.
 
-**Jetzt:** <the current step> · **Als Nächstes:** <the concrete next action>
-
-## Aufbau
-
-| Schritt | Stand | Notiz |
-|---|---|---|
-| Wissensbasis | ⬜ | |
-| Produktdefinition | ⬜ | |
-| Stack | ⬜ | |
-| Design-System | ⬜ | entfällt ohne Oberfläche |
-| Projektkonfiguration | ⬜ | |
-| Komponentenkarte | ⬜ | |
-| Specs | ⬜ | 0 von 0 |
-| Seitenplanung | ⬜ | |
-| UI-Specs | ⬜ | 0 von 0 |
-
-## Bauphasen
-
-<Empty until the specs stand. Derived from them, not planned ahead of them.>
-```
-
-Status marks: `⬜` open, `🔄` in progress, `✅` done, `❌` deliberately dropped.
-
-Adapt the step names to the project's documentation language. Drop steps that do not apply rather than marking them done: a project without an interface has no design system and no UI specs, and leaving them as permanently open rows makes the file look unfinished forever.
+Status marks: `⬜` open, `🔄` in progress, `✅` done, `❌` deliberately dropped. Drop steps that do not apply rather than marking them done: a project without an interface has no design system and no UI specs, and leaving them permanently open makes the file look unfinished forever.
 
 ## Kept current
 
@@ -46,9 +22,13 @@ A roadmap that is not updated is worse than none, because the next session belie
 
 Write what is true, not what is planned. A step that ran halfway is `🔄` with a note on what is missing, never `✅` because it nearly worked.
 
-## Referenced from the configuration
+## Reaching the session
 
-The project's root configuration names this file as the place the current status lives, and states the obligation to keep it current. Without that, a session has no reason to look, and the file quietly becomes a diary nobody reads.
+Two mechanisms, and both are needed.
+
+**The SessionStart hook injects it**, so it is in context before the first prompt without anyone choosing to read it. Its path goes into `.claude/roadmap-path` when the hook is installed, because the knowledge base sits outside the repository and the hook cannot guess.
+
+**The root configuration names it** as the place the current status lives, and states the obligation to keep it current. The hook covers the reading; this covers the writing. Without the obligation the file becomes a diary of the first week that everything afterwards quietly contradicts.
 
 ## Where it does not overlap
 

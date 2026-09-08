@@ -70,7 +70,9 @@ A REST-based alternative exists that talks to a running Obsidian instance throug
 
 Keep it this shallow at the start. Depth earns its way in later. Invented hierarchy only makes things hard to find.
 
-**Initialise the roadmap immediately**, before the product definition exists, with the steps ahead marked as unstarted. It is the file that answers "where are we", and it answers it from the first session rather than from the day someone remembers to create it. **Read `references/roadmap.md` for the shape and the rules that keep it honest.**
+**Copy the roadmap in immediately**, before the product definition exists. The framework ships it filled in at `templates/roadmap.md`: the steps, the skill that performs each one, and the rules that keep it honest. Copy it into the project's space in the knowledge base and adjust only what is project-specific, rather than composing it fresh each time.
+
+It is the file that answers "where are we", and it answers it from the very first session rather than from the day someone remembers to create it. **Read `references/roadmap.md` for how it is meant to be used.**
 
 It starts as the setup process and grows into the build plan. Same document, two stages of a project's life, which is why it exists this early.
 
@@ -225,10 +227,12 @@ Everything above spans far more than one session. The product interview, the sta
 
 Two files carry across that gap, and they answer different questions. The **roadmap** in the knowledge base says where the project stands and what comes next. `.claude/state.md` says what happened in the last session. **Read `references/roadmap.md` and `references/state-file.md`;** the division between them is the point and collapsing it destroys both.
 
-The hook is what makes this reliable. An instruction in a `CLAUDE.md` asking the model to read a file first is a request; a hook runs regardless. The framework ships two for this, both copied to `.claude/hooks/` and registered:
+The hooks are what make this reliable. An instruction asking the model to read a file first is a request; injected content is simply there. The framework ships two, both copied to `.claude/hooks/` and registered:
 
-- `session-state.py` on SessionStart, which injects the file
+- `session-state.py` on SessionStart, which injects **both** the roadmap and the handoff, and tells the session to open by naming where things stand and offering the next step rather than waiting to be asked
 - `session-recap-trigger.py` on UserPromptSubmit, which forces the handoff to be written when someone says goodbye
+
+The roadmap lives in the knowledge base, outside the repository, so the hook cannot guess its path. Write it into `.claude/roadmap-path`, one line, when installing the hook. You know the path because you created the structure in phase 0. Without it the hook still works and injects only the handoff, which is the quiet failure worth avoiding.
 
 A phrase hook fires on every prompt, so its patterns have to be unambiguous. The test for one: could this sentence be said mid-work without meaning what the hook assumes? If yes, it does not belong in the list. A hook triggering on everyday words fires constantly, is almost always wrong, and devalues the skill it forces, because that skill then runs whether or not it was wanted.
 
