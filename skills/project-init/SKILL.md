@@ -199,7 +199,7 @@ Sections in this order. Omit any that has nothing true to say, because an empty 
 
 This is one of the few places where a short instruction earns its permanent context cost, because it is read at the start of every session and decides whether the session begins informed or guessing.
 
-**Phrase routing.** One table mapping what the user says to the skill that should run. The only routing table in the project. See below.
+**Phrase routing.** One table mapping what the user says to the skill that should run, plus the one rule that binds those skills to the roadmap's order. The only routing table in the project. See below.
 
 **Known weak spots.** Start empty, with a note that reviews fill it once a pattern has appeared twice. An empty section with a stated filling rule is honest. A pre-filled one is invention.
 
@@ -276,7 +276,32 @@ Path routing needs no table. A rule with `paths:` frontmatter is loaded by the t
 
 **Phrase routing** does need writing down: a table in the root file mapping what the user actually says to the skill that should run. Use the phrases they really use, in every language they work in. This is the only routing table, and it lives in the root file alone. Routing kept in two places drifts apart, and then the wrong one gets followed.
 
+Give it a third column: the roadmap step the skill belongs to. Two columns answer *which skill*; the third is what makes the next rule cheap to obey, because the number is what gets looked up.
+
+| Was der Nutzer sagt | Skill | Schritt im Fahrplan |
+|---|---|---|
+| „Komponenten schneiden", „Specs anlegen" | `create-specs` | 6 |
+| „Schreib die Spec für X", „X spezifizieren" | `write-spec` | 7 |
+
 Where a phrase must always trigger its skill, a `UserPromptSubmit` hook can enforce it. The table then documents what the hook does rather than hoping the model reads it.
+
+**Order is the part that fails in practice**, and the table alone does not fix it. A phrase table answers which skill a sentence means. It says nothing about whether that skill's turn has come, and a skill that runs three steps early produces a document resting on things nobody has decided yet. It also fails quietly, because the output looks like the output.
+
+So one rule goes into the root file next to the table, and the wording matters more than its length:
+
+> Bevor ein Skill aus diesem Ablauf läuft, wird seine Zeile im Fahrplan gelesen. Steht die Voraussetzung dort noch offen, wird der Skill **nicht** ausgeführt: der fehlende Schritt wird benannt und angeboten. Das gilt auch, wenn nach dem Ergebnis gefragt wird statt nach dem Schritt — „schreib die Spec für X" ist ein Aufruf von Schritt 7.
+
+Four things make that hold rather than decorate the file.
+
+**It is a pointer, not a second copy of the order.** The order lives in the roadmap's `Setzt voraus` column and nowhere else, so the two cannot disagree. A root file that restates the sequence has created the exact drift this structure exists to prevent.
+
+**The roadmap is injected**, by the SessionStart hook, so the lookup costs nothing and has no excuse. A rule requiring a file to be opened first is a rule with a way out.
+
+**It names the fallback.** A rule that only forbids is one a session argues itself past when the user sounds like they are in a hurry. Naming what to do instead — say which step is missing, offer it — leaves nothing to improvise.
+
+**It covers the phrasing the failure actually arrives in.** Nobody asks for step 7 by name; they ask for the spec for X. Without that clause the rule reads as applying only to requests that name a step, which is the half that never causes the problem.
+
+The same hook that injects the roadmap repeats this rule in its instruction, so it holds even in a session that never reaches the root file.
 
 ---
 

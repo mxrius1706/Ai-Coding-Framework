@@ -39,7 +39,11 @@ Sections, all of them mandatory:
 
 **Critical files.** Which files change and how. This is where the reading in phase 0 pays off, and where a wrong assumption becomes visible before it costs anything.
 
-**Order.** The concrete steps, in sequence, each one small enough to be finished and checked.
+**Order.** The concrete steps, in sequence, each one small enough to be finished and checked. Each step gets a short id (`a1`, `a2`, ...) so commits and findings can name it.
+
+**Blocks.** The unit `execute-plan` builds: a group of **three to six tasks** that share an area of the code or build on each other, run in one worktree by one implementer and checked by one review. Each block gets an id (`b1`, `b2`, ...), its task ids, and its file area in one line. Cut blocks along the code, not along the roadmap's bullet points: tasks that touch the same files belong together, because splitting them only creates rebases between siblings. A block of one task is allowed only when the task is exclusive (schema, compose, running stack) or genuinely stands alone. Every hand-off costs minutes, so twenty single tasks are the slow plan and five blocks the fast one.
+
+**Waves.** Which blocks may run at the same time. `execute-plan` runs up to **three** blocks of a wave in parallel, so the plan has to say where that is safe. Blocks in one wave have **disjoint** file areas and touch neither the schema, nor the compose files, nor anything that needs the running dev stack (database, dev server, a manual pass through the interface). Anything of that kind is marked **exclusive** and forms a wave of its own; keep exclusive blocks small (the migration alone, not the migration plus the features on top). List the waves in order, each with its block ids and one line on why the file areas do not overlap. Aim for few waves: a plan of three or four waves is normal, ten is a sign the blocks are too small. When in doubt about an overlap, put the block in the next wave rather than shrinking it.
 
 **Tests.** Case and expectation, including the failure cases. Follow the project's test rules for what is mandatory.
 

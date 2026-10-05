@@ -19,10 +19,11 @@ Der Ausgangspunkt ist eine Beobachtung. Ein Agent, der bei jeder Sitzung bei nul
 | `write-ui-spec` | Eine Seite spezifizieren, Mockup vor dem Dokument, am Bild iteriert |
 | `spec-consistency` | Den Spec-Graph auf Widersprüche prüfen. Auslöser statt Takt, reiner Bericht |
 | `plan-build` | Aus den fertigen Specs die Bauphasen mit Gates ableiten und in den Fahrplan schreiben |
-| `planning` | Plan je Bauphase, im Planungsmodus geschrieben, vor dem Branch, mit Out of Scope |
-| `execute-plan` | Den freigegebenen Plan abarbeiten, frischer Subagent je Task, zwei Reviews dazwischen |
+| `planning` | Plan je Bauphase, im Planungsmodus geschrieben, vor dem Branch, mit Blöcken, Wellen und Out of Scope |
+| `execute-plan` | Den freigegebenen Plan abarbeiten, Block für Block im eigenen Worktree, bis zu drei parallel |
 | `testing` | Testdisziplin. Zuerst der fehlschlagende Test, Verify Red ist Pflicht |
-| `review-changes` | Erstes Gate am Phasenende. Drei Linsen parallel, Gate-Abgleich, reiner Bericht |
+| `handlauf` | Die gebaute Fläche im Browser durchklicken und ansehen, wie ein Nutzer sie erlebt. Reiner Bericht |
+| `review-changes` | Erstes Code-Gate am Phasenende. Drei Linsen parallel, Gate-Abgleich, reiner Bericht |
 | `thermo-nuclear-code-quality-review` | Zweites Gate. Fragt nicht ob der Code richtig ist, sondern ob er wartbar bleibt |
 | `config-sync` | Die Konfiguration gegen ihre vier Autoritäten prüfen und die Drift nachziehen |
 | `session-recap` | Handoff am Sitzungsende, prüft dabei den Fahrplan auf Drift |
@@ -31,7 +32,7 @@ Der Ausgangspunkt ist eine Beobachtung. Ein Agent, der bei jeder Sitzung bei nul
 | `skill-creator` | Skills bauen, verbessern und ihre Trefferquote messen |
 | `claude-statusbar` | Die Statuszeile im Terminal einrichten und steuern. Optional, wird bei `project-init` angeboten |
 
-Zwei Dateien tragen über Sitzungsgrenzen. Der **Fahrplan** `roadmap.md` in der Wissensbasis beantwortet, wo das Projekt steht und was als Nächstes kommt; er wird gleich zu Beginn aus der mitgelieferten Vorlage kopiert, bereits mit dem Ablauf ausgefüllt, und wächst später um die Bauphasen, die `plan-build` aus den fertigen Specs ableitet. Ab dann ist er zu groß für jede Sitzung, deshalb injiziert der Hook nur noch den Kopf und den Abschnitt, auf den die Zeile `Aktuelle Bauphase` zeigt. `.claude/state.md` im Repo trägt die Übergabe der letzten Sitzung. Dazu zwei Hooks, die `project-init` mit installiert: `session-state.py` injiziert Fahrplan und Übergabe bei Sitzungsstart und lässt die Sitzung mit dem nächsten Schritt eröffnen, `session-recap-trigger.py` erzwingt sie bei Abschiedsformeln.
+Zwei Dateien tragen über Sitzungsgrenzen. Der **Fahrplan** `roadmap.md` in der Wissensbasis beantwortet, wo das Projekt steht und was als Nächstes kommt; er wird gleich zu Beginn aus der mitgelieferten Vorlage kopiert, bereits mit dem Ablauf ausgefüllt, je Schritt samt seiner Voraussetzung und der Regel, dass ein Skill nicht läuft, solange die noch offen ist. Später wächst er um die Bauphasen, die `plan-build` aus den fertigen Specs ableitet. Ab dann ist er zu groß für jede Sitzung, deshalb injiziert der Hook nur noch den Kopf und den Abschnitt, auf den die Zeile `Aktuelle Bauphase` zeigt. `.claude/state.md` im Repo trägt die Übergabe der letzten Sitzung. Dazu zwei Hooks, die `project-init` mit installiert: `session-state.py` injiziert Fahrplan und Übergabe bei Sitzungsstart und lässt die Sitzung mit dem nächsten Schritt eröffnen, `session-recap-trigger.py` erzwingt sie bei Abschiedsformeln.
 
 Der Kreislauf ist geschlossen: von der Idee über die Specs und die Bauphasen zurück in die Konfiguration, die dabei gegen den gebauten Code korrigiert wird. Was noch fehlt, sagt die Tabelle am Ende von [LOOP.md](LOOP.md).
 
@@ -69,7 +70,7 @@ Damit gilt es in jedem Projekt. Soll es nur für eines gelten, geht es nach `.cl
 
 Die beiden Hooks und die Fahrplan-Vorlage brauchen keinen eigenen Schritt. Sie liegen bei `project-init` und werden von ihm eingerichtet, wenn ein Projekt aufgesetzt wird — je Projekt, denn dort gehören sie hin.
 
-> **Was es kostet.** Claude Code legt bei jedem Sitzungsstart Name und Beschreibung aller Skills in den Kontext, damit es weiß, wann welcher dran ist. Diese Liste ist auf etwa 1 % des Kontextfensters gedeckelt, und darüber werden Beschreibungen abgeschnitten, ohne Warnung. Die 21 Skills hier belegen rund 2.700 Token. Wer schon viele eigene Skills hat, installiert besser nur die, die er wirklich braucht: `project-init`, `prd`, `grill-me` und `grilling` sind der kleinste sinnvolle Anfang.
+> **Was es kostet.** Claude Code legt bei jedem Sitzungsstart Name und Beschreibung aller Skills in den Kontext, damit es weiß, wann welcher dran ist. Diese Liste ist auf etwa 1 % des Kontextfensters gedeckelt, und darüber werden Beschreibungen abgeschnitten, ohne Warnung. Die 22 Skills hier belegen rund 3.300 Token. Wer schon viele eigene Skills hat, installiert besser nur die, die er wirklich braucht: `project-init`, `prd`, `grill-me` und `grilling` sind der kleinste sinnvolle Anfang.
 
 ## Loslegen
 

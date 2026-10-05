@@ -2,9 +2,9 @@
 
 Der Baukasten enthält fremde Skills, teils unverändert, teils angepasst. Diese Datei hält fest, was woher kommt und was daran geändert wurde.
 
-Sieben der 21 Skills stammen von anderen und stehen unten in der Tabelle. Die übrigen vierzehn sind Eigenarbeit.
+Sieben der 22 Skills stammen von anderen und stehen unten in der Tabelle. Die übrigen fünfzehn sind Eigenarbeit.
 
-Acht davon sind unmittelbar für diesen Baukasten entstanden: `create-specs`, `design-system`, `plan-pages`, `project-init`, `session-recap`, `stack-decisions`, `plan-build`, `planning`. Die anderen sechs sind aus Skills des Referenzprojekts hervorgegangen, die dort selbst geschrieben wurden: `write-ui-spec`, `spec-consistency`, `execute-plan`, `review-changes`, `testing`, `config-sync`. Das ist vom Autor bestätigt, nicht daraus geschlossen, dass ein Herkunftsvermerk fehlt - bei `write-spec` stand einer da, und der gehört deshalb in die Tabelle.
+Acht davon sind unmittelbar für diesen Baukasten entstanden: `create-specs`, `design-system`, `plan-pages`, `project-init`, `session-recap`, `stack-decisions`, `plan-build`, `planning`. Die anderen sieben sind aus älteren, selbst geschriebenen Skills des Autors hervorgegangen: `write-ui-spec`, `spec-consistency`, `execute-plan`, `review-changes`, `testing`, `config-sync`, `handlauf`. Das ist vom Autor bestätigt, nicht daraus geschlossen, dass ein Herkunftsvermerk fehlt - bei `write-spec` stand einer da, und der gehört deshalb in die Tabelle.
 
 | Skill | Quelle | Lizenz | Beleg | Zustand |
 |---|---|---|---|---|
@@ -26,7 +26,7 @@ Acht davon sind unmittelbar für diesen Baukasten entstanden: `create-specs`, `d
 
 **`thermo-nuclear-code-quality-review`** - unverändert übernommen aus dem `cursor-team-kit` in [cursor/plugins](https://github.com/cursor/plugins/blob/main/cursor-team-kit/skills/thermo-nuclear-code-quality-review/SKILL.md), MIT, dort als Werk von Cursor ausgewiesen. Der Skill kursiert zusätzlich in weiteren öffentlichen Repos; maßgeblich für diesen Baukasten ist die genannte Quelle, weil sie der tatsächliche Bezugsweg ist.
 
-Als einziger Bau-Skill wurde er **nicht** umgeschrieben. Bei allen anderen ist die Fassung hier eigen formuliert; hier nicht, weil genau diese Fassung im Referenzprojekt bereits als Gate läuft und erprobt ist. Der Preis dafür ist eine Einschränkung, die bekannt sein sollte: Ein Teil ihrer Beispiele ist auf TypeScript gemünzt (`any`, `unknown`, Casts). Die Regeln dahinter gelten sprachunabhängig, die Formulierung ist es nicht.
+Als einziger Bau-Skill wurde er **nicht** umgeschrieben. Bei allen anderen ist die Fassung hier eigen formuliert; hier nicht, weil genau diese Fassung bereits als Gate im Einsatz und erprobt ist. Der Preis dafür ist eine Einschränkung, die bekannt sein sollte: Ein Teil ihrer Beispiele ist auf TypeScript gemünzt (`any`, `unknown`, Casts). Die Regeln dahinter gelten sprachunabhängig, die Formulierung ist es nicht.
 
 **`claude-statusbar`** - unverändert übernommen. Der Skill steuert das externe Werkzeug `cs`, das nicht Teil dieses Repos ist und über `cs --setup` installiert wird. `project-init` bietet das in Phase 0 an, wenn drei Bedingungen zusammenkommen: Arbeit im Terminal, noch keine `statusLine` konfiguriert, und Zustimmung des Nutzers. Es ist eine Einstellung je Rechner, nicht je Projekt, deshalb wird bei bereits gesetzter `statusLine` stillschweigend übersprungen statt erneut gefragt.
 

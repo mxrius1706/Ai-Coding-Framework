@@ -57,7 +57,7 @@ Use a full-reading agent, not an excerpt-reading one. Constructing an exploit an
 
 ### The brief
 
-Every reviewer gets: the changed files, the governing specs with their relevant requirement numbers, the current phase with its gate, the project's architecture rules, the true pre-check flags, and its own lens. Plus two instructions that do the actual work:
+Every reviewer runs as a subagent on the **strong model**, set explicitly rather than inherited. This is the phase gate, and it is what makes a lighter per-block review during the build acceptable: a net on the cheap model defeats the trade that `execute-plan` makes. Every reviewer gets: the changed files, the governing specs with their relevant requirement numbers, the current phase with its gate, the project's architecture rules, the true pre-check flags, and its own lens. Plus two instructions that do the actual work:
 
 **Stay in your lens.** A finding outside it is not yours; a sibling covers it. Deep in one lens beats broad and shallow.
 

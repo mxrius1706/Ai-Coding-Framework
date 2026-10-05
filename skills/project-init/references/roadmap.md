@@ -12,6 +12,14 @@ It is copied in **before the product definition exists**, so a project's very fi
 
 Status marks: `⬜` open, `🔄` in progress, `✅` done, `❌` deliberately dropped. Drop steps that do not apply rather than marking them done: a project without an interface has no design system and no UI specs, and leaving them permanently open makes the file look unfinished forever.
 
+## Every step names what it needs
+
+The `Setzt voraus` column carries the step numbers that must stand before this one starts, and it is what turns an implied order into a checkable fact. The rule that goes with it sits in the **head**: before a skill from this sequence runs, its row is read, and if the precondition is still `⬜` or `🔄` the skill does not run — the missing step is named and offered instead. `❌` counts as done, because a dropped step blocks nothing.
+
+It sits in the head on purpose. Once the build phases are in the file, the head is the only part injected regardless of size, so a rule placed anywhere else stops reaching the session exactly when the project has grown complicated enough to need it.
+
+The failure this addresses is not the wrong skill, it is the right skill too early, and it almost always arrives as a request for the **result** rather than the step: nobody asks for step 7 by name, they ask for the spec for X. The rule therefore says so explicitly, or it gets read as applying only to requests that name a step.
+
 ## Kept current
 
 A roadmap that is not updated is worse than none, because the next session believes it. Two rules keep it honest.

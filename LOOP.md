@@ -58,11 +58,13 @@ flowchart TD
     SP --> PB
     PB --> C
     PB --> RM
-    PB --> G[Bauabschnitt: Plan → Freigabe → Branch]
-    G --> H[Bauen]
+    PB --> G[Bauabschnitt: Plan mit Blöcken und Wellen<br/>→ Freigabe → Phasen-Branch]
+    G --> H[execute-plan: Block je Worktree,<br/>bis zu drei parallel]
     H --> I[Hooks: Typen, Lint, Tests]
     I --> H
-    H --> J[Gates: Review + Qualitätsprüfung]
+    H --> HL[handlauf: Fläche im Browser]
+    HL --> J[Gates: review-changes +<br/>thermo-nuclear]
+    H --> J
     J --> K[Rückfluss: write-spec]
     K --> D
     J --> L[Wiederkehrende Muster in CLAUDE.md]
@@ -232,7 +234,11 @@ Erst Planungsmodus, dann Plandatei, dann Eintrag im Fahrplan, dann Freigabe, dan
 
 Der Fahrplan nennt die **Absicht** der Phase, nicht den Weg. Wird der Weg nicht vorher festgelegt, entsteht er während des Bauens, Entscheidung für Entscheidung, an der Stelle, an der Korrekturen am teuersten sind. Der Planungsmodus erzwingt, dass zuerst gelesen und gefragt wird.
 
-Pflichtabschnitte: Kontext, Ziel, Entscheidungen, kritische Dateien, Reihenfolge, Tests, Verifikation, **Out of Scope**. Der letzte fehlt am häufigsten und ist der, der angrenzende Arbeit draußen hält.
+Pflichtabschnitte: Kontext, Ziel, Entscheidungen, kritische Dateien, Reihenfolge, **Blöcke**, **Wellen**, Tests, Verifikation, **Out of Scope**. Der letzte fehlt am häufigsten und ist der, der angrenzende Arbeit draußen hält.
+
+**Blöcke und Wellen sind der Teil, den der Plan für das Bauen liefert.** Ein **Block** sind drei bis sechs Tasks, die sich einen Bereich des Codes teilen oder aufeinander aufbauen; er läuft als eine Einheit und wird einmal geprüft. Geschnitten wird **entlang des Codes, nicht entlang der Stichpunkte im Fahrplan**: Tasks, die dieselben Dateien anfassen, gehören zusammen, sonst entstehen Rebases zwischen Geschwistern. Eine **Welle** sagt, welche Blöcke gleichzeitig laufen dürfen — ihre Dateibereiche müssen disjunkt sein, und keiner darf Schema, Container-Komposition oder den laufenden Dev-Stack brauchen. Was das braucht, ist **exklusiv** und bildet eine eigene Welle.
+
+Diese Entscheidung gehört in den Plan und nicht ins Bauen, weil nur hier noch jemand den Überblick über alle Dateien hat. Drei oder vier Wellen sind normal; zehn sind ein Zeichen, dass die Blöcke zu klein geschnitten sind.
 
 Entscheidungen, die während des Bauens fallen, wandern **sofort** in den Entscheidungsabschnitt der Plandatei, nicht am Ende. Was am Ende nachgetragen wird, ist Rekonstruktion und nicht Protokoll.
 
@@ -240,11 +246,17 @@ Entscheidungen, die während des Bauens fallen, wandern **sofort** in den Entsch
 
 **Skill:** `execute-plan`, dazu Hooks nach jeder Dateiänderung
 
-Ein Task nach dem anderen, je Task ein **frischer Subagent**, und nach jedem Task zwei Reviews, bevor der nächste beginnt. Der Koordinator kuratiert Kontext und schreibt selbst keinen Code: Wer selbst implementiert, füllt seinen Kontext mit Detail, das in einen Subagenten gehört, und hat danach niemanden mehr mit Außensicht.
+**Die Einheit ist der Block, nicht der einzelne Task.** Je Block ein **frischer Subagent**, ein **eigener git-Worktree** auf einem Block-Branch am Phasen-Branch, und **ein** Review. Bis zu drei Blöcke einer Welle laufen gleichzeitig. Der Koordinator kuratiert Kontext, verwaltet Branches und urteilt — er schreibt selbst keinen Code: Wer selbst implementiert, füllt seinen Kontext mit Detail, das in einen Subagenten gehört, und hat danach niemanden mehr mit Außensicht.
 
-Die beiden Reviews je Task fragen Verschiedenes. **Spec-Treue** prüft, ob genau das gebaut wurde, was der Plan verlangt, und ob etwas gebaut wurde, das er **nicht** verlangt. Der zweite Fall ist der Fund, den sonst niemand macht. **Qualität** prüft erst danach, sonst wird über die Machart von etwas geurteilt, das noch das Falsche tut.
+**Geschwindigkeit kommt aus weniger Übergaben, nicht aus schwächeren Prüfungen.** Jede Übergabe — Worktree, Dispatch, Review, Rebase, Merge, Testlauf — kostet Minuten. Ein Plan, der in zwanzig Einzeltasks zerfällt, zahlt das zwanzigmal; fünf Blöcke zahlen es fünfmal. Dass ein Block mit einem Review auskommt, ist nur deshalb vertretbar, weil am Phasenende die beiden Gates in voller Tiefe stehen. Das Netz rechtfertigt den Sprung, nicht umgekehrt.
 
-Was der Subagent nicht im Bündel hat, existiert für ihn nicht. Deshalb wird Inhalt eingebettet, nicht auf Pfade verwiesen. Ein Pfad im Prompt ist eine Bitte.
+Dazu gehört eine Arbeitsteilung bei den Modellen: Implementierer, Block-Reviewer und Fixer laufen auf dem **günstigeren Modell**, ausdrücklich gesetzt und nie vom Koordinator geerbt. Die Gates am Phasenende laufen auf dem **starken Modell**. Ein Netz auf dem billigen Modell macht den Tausch zunichte.
+
+Der Block-Review beantwortet beide alten Fragen in einem Durchgang, in dieser Reihenfolge: **Spec-Treue** zuerst — ist genau das gebaut, was der Plan verlangt, und ist etwas gebaut, das er **nicht** verlangt? Der zweite Fall ist der Fund, den sonst niemand macht. **Qualität** danach, sonst wird über die Machart von etwas geurteilt, das noch das Falsche tut. Blockierend sind nur die zwei obersten Schweregrade; der Rest wird gesammelt und ans Gate übergeben, wo ein Muster sichtbar wird, das ein einzelner Block nicht zeigt.
+
+Integriert wird in der Reihenfolge, in der Blöcke fertig werden: Rebase auf den aktuellen Phasen-Kopf, Typprüfung, Merge mit `--no-ff`, Worktree und Branch weg. Der Merge-Commit hält fest, dass dieser Block als geprüfte Einheit hereinkam. **Erst wenn alle Blöcke einer Welle drin sind**, läuft die volle Testsuite einmal auf dem Phasen-Branch — grün öffnet die nächste Welle, rot sucht den Block, der es gebrochen hat.
+
+Was der Subagent nicht im Bündel hat, existiert für ihn nicht. Das Bündel wird aber **einmal je Phase** geschrieben und von allen Subagenten gelesen, statt in jeden Prompt kopiert zu werden. Genau das machte vorher jeden Dispatch groß und langsam. Die bindenden Regeln stehen darin als **Inhalt**, nicht als Pfad: Ein Pfad im Prompt ist eine Bitte.
 
 Parallel dazu die Sofortprüfung: Typprüfung und Linter laufen nach jedem Edit, Tests, wenn der geänderte Pfad welche hat. Ein Fehler, der sofort zurückkommt, kostet einen Gedanken. Derselbe Fehler zwanzig Änderungen später kostet eine Suche.
 
@@ -254,7 +266,9 @@ Parallel dazu die Sofortprüfung: Typprüfung und Linter laufen nach jedem Edit,
 
 **Skill:** `review-changes`
 
-Am Ende eines Abschnitts, in fester Reihenfolge: Checkliste, Tests grün, Änderungsreview, Wartbarkeitsreview, Bericht.
+Am Ende eines Abschnitts, in fester Reihenfolge: Checkliste, Tests grün, **Handlauf** (wenn die Phase eine Oberfläche hat), Änderungsreview, Wartbarkeitsreview, Bericht.
+
+Der **`handlauf`** kommt vor den Code-Gates, weil er eine Frage beantwortet, die kein Test und kein Review beantworten kann: Wie ist es, das zu benutzen? Er geht mit dem Browser durch die gebaute Fläche, sieht sich jede Seite und jeden Zustand wirklich an, klickt die Hauptwege und die Randfälle, beobachtet dabei Server-Log, Konsole und Netzwerk, und prüft nach dem Speichern nach, ob es wirklich gespeichert ist — ein Erfolgs-Toast ist kein Beleg. Die Specs sind dabei Orientierung, keine Checkliste: Eine Seite kann jede Anforderung erfüllen und trotzdem schief, langsam oder verwirrend sein, und genau das soll auffallen. Reiner Bericht, Befunde nach Schwere, keine Fixes — ein Lauf, der zwischendurch repariert, prüft am Ende einen Stand, den niemand gebaut hat.
 
 Das Änderungsreview misst **nicht** allgemeine Code-Ästhetik, sondern: Tut der Code, was die Spec sagt, auf die Art, wie dieses Projekt es sonst tut? Es lädt gezielt die Specs der geänderten Pfade und fächert in **drei Linsen** auf, jede mit einem eigenen Kopf: Sicherheit, Spec-Treue, Struktur. Drei Denkweisen; zusammengelegt kostet es Tiefe, weiter aufgeteilt fallen Findings durch die Ritzen.
 
@@ -311,15 +325,21 @@ Dieser Schritt schließt den Kreis. Ohne ihn ist alles davor eine Einbahnstraße
 
 ### 8. Zwei Fragen, zwei Dateien
 
-**Wo stehen wir und was kommt als Nächstes** beantwortet der **Fahrplan** (`roadmap.md`) in der Wissensbasis. Er wird in Phase 0 aus der Vorlage neben `project-init` kopiert, noch bevor das PRD existiert, und trägt den Ablauf dieses Baukastens bereits ausgefüllt: die Schritte, den Skill je Schritt, und die Regeln, die ihn ehrlich halten. Später wachsen die Bauphasen hinein, abgeleitet aus den fertigen Specs. Ein Dokument, zwei Lebensabschnitte eines Projekts, nicht zwei Dokumente.
+**Wo stehen wir und was kommt als Nächstes** beantwortet der **Fahrplan** (`roadmap.md`) in der Wissensbasis. Er wird in Phase 0 aus der Vorlage neben `project-init` kopiert, noch bevor das PRD existiert, und trägt den Ablauf dieses Baukastens bereits ausgefüllt: die Schritte, den Skill je Schritt, dessen Voraussetzung, und die Regeln, die ihn ehrlich halten. Später wachsen die Bauphasen hinein, abgeleitet aus den fertigen Specs. Ein Dokument, zwei Lebensabschnitte eines Projekts, nicht zwei Dokumente.
 
 Gepflegt wird er von den Skills selbst: wer einen Schritt abschließt, trägt ihn ein. Und die Wurzel-`CLAUDE.md` nennt ihn ausdrücklich als **den** Ort für den Status, samt der Pflicht, ihn aktuell zu halten. Beides ist nötig. Ohne den Verweis schaut niemand hin, ohne die Pflicht wird er zum Tagebuch der ersten Woche.
+
+**Er sagt auch, was noch nicht dran ist.** Jeder Schritt nennt seine Voraussetzung, und der Kopf trägt die Regel dazu: Bevor ein Skill des Ablaufs läuft, wird seine Zeile gelesen; steht die Voraussetzung noch offen, wird er **nicht** ausgeführt, sondern der fehlende Schritt benannt und angeboten.
+
+Das ist die Antwort auf den häufigsten Fehlgriff, und der ist nicht der falsche Skill, sondern der richtige zu früh. Er fällt auch nicht auf, weil das Ergebnis aussieht wie ein Ergebnis — eine Spec, die auf Entscheidungen aufbaut, die niemand getroffen hat, liest sich wie jede andere. Und er kommt fast immer über eine Bitte, die nach dem **Ergebnis** fragt statt nach dem Schritt: Niemand verlangt Schritt 7, alle verlangen die Spec für X. Deshalb steht dieser Fall ausdrücklich in der Regel.
+
+Die Reihenfolge steht dabei nur an einer Stelle, nämlich im Fahrplan. Die Wurzel-`CLAUDE.md` verweist darauf, statt sie zu wiederholen, und der SessionStart-Hook wiederholt die **Regel** in seiner Anweisung — nicht die Reihenfolge selbst —, damit sie auch in einer Sitzung greift, die die Wurzel nie zu sehen bekommt.
 
 **Was war letzte Sitzung** beantwortet `.claude/state.md` im Repo, geschrieben von `session-recap`.
 
 Beide werden vom SessionStart-Hook **injiziert**, nicht nur erwähnt, samt der Anweisung, die Sitzung mit Standort und Vorschlag zu eröffnen statt auf eine Frage zu warten. Eine Anweisung, eine Datei zu lesen, ist eine Bitte; injizierter Inhalt liegt einfach da. Der Fahrplan lebt außerhalb des Repos, deshalb schreibt `project-init` seinen Pfad beim Installieren nach `.claude/roadmap-path`.
 
-**Er wächst, und ab einer Größe wird nicht mehr alles injiziert.** In der Aufbauphase ist der Fahrplan kurz und geht ganz in die Sitzung. Sobald die Bauphasen darin stehen, passt er nicht mehr: das Referenzprojekt, aus dem dieser Baukasten stammt, hat 65.000 Zeichen. Stumpfes Abschneiden wäre hier der schlimmste Fehlermodus, weil abgeschnittener Inhalt in der Sitzung genauso aussieht wie vollständiger. Deshalb trägt der Kopf die Zeile `**Aktuelle Bauphase:**`, und der Hook injiziert von da an **den Kopf und genau den Abschnitt, dessen Überschrift diesen Text enthält**. Die übrigen Phasen bleiben lesbar, sie liegen nur nicht mehr in jeder Sitzung herum. Der Preis ist eine Zeile, die stimmen muss: zeigt sie auf die falsche Phase, arbeitet die nächste Sitzung mit der falschen Phase, ohne dass etwas fehlschlägt. Sie wird beim Phasenwechsel gesetzt, im selben Zug wie „Jetzt".
+**Er wächst, und ab einer Größe wird nicht mehr alles injiziert.** In der Aufbauphase ist der Fahrplan kurz und geht ganz in die Sitzung. Sobald die Bauphasen darin stehen, passt er nicht mehr: ein ausgewachsener Fahrplan erreicht leicht 60.000 Zeichen und mehr. Stumpfes Abschneiden wäre hier der schlimmste Fehlermodus, weil abgeschnittener Inhalt in der Sitzung genauso aussieht wie vollständiger. Deshalb trägt der Kopf die Zeile `**Aktuelle Bauphase:**`, und der Hook injiziert von da an **den Kopf und genau den Abschnitt, dessen Überschrift diesen Text enthält**. Die übrigen Phasen bleiben lesbar, sie liegen nur nicht mehr in jeder Sitzung herum. Der Preis ist eine Zeile, die stimmen muss: zeigt sie auf die falsche Phase, arbeitet die nächste Sitzung mit der falschen Phase, ohne dass etwas fehlschlägt. Sie wird beim Phasenwechsel gesetzt, im selben Zug wie „Jetzt".
 
 Die Trennung ist der Punkt. Der Fahrplan ändert sich selten, die Übergabe jedes Mal. Wer beides mischt, begräbt das Dauerhafte unter dem Flüchtigen. Und der Fahrplan fasst nichts zusammen, was anderen gehört: der Spec-Index besitzt den Status je Spec, der Fahrplan zeigt nur darauf, und beim Widerspruch gewinnt der Index.
 
@@ -368,11 +388,12 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | Fahrplan als Statusquelle | `skills/project-init/templates/roadmap.md`, vorbefüllt, in Phase 0 kopiert | vorhanden |
 | Übergabe + Hooks | `.claude/state.md`; Hook injiziert Fahrplan und Übergabe | vorhanden |
 | `session-recap` + Hook | Handoff am Sitzungsende, Abschiedsformeln als Auslöser | vorhanden |
-| `planning` | Plan je Phase, im Planungsmodus, vor dem Branch | vorhanden |
-| `execute-plan` | Plan abarbeiten, frischer Subagent je Task, zwei Reviews dazwischen | vorhanden |
+| `planning` | Plan je Phase, im Planungsmodus, vor dem Branch, mit Blöcken und Wellen | vorhanden |
+| `execute-plan` | Plan abarbeiten, Block je Worktree, bis zu drei parallel, ein Review je Block | vorhanden |
 | `testing` | Testdisziplin, Verify Red, Pflichtfälle aus dem Projekt abgeleitet | vorhanden |
-| `review-changes` | Gate am Phasenende, drei Linsen, Gate-Abgleich, reiner Bericht | vorhanden |
+| `handlauf` | Fläche im Browser durchgehen, Befunde nach Schwere, reiner Bericht | vorhanden |
+| `review-changes` | Code-Gate am Phasenende, drei Linsen, Gate-Abgleich, reiner Bericht | vorhanden |
 | `thermo-nuclear-code-quality-review` | Zweites, getrenntes Gate: Wartbarkeit statt Korrektheit | vorhanden |
 | Weitere Hooks | Sofortprüfung nach Edits | **fehlt** |
 
-Was heute steht, trägt den ganzen Weg von der Idee bis zum Ende einer Bauphase und wieder zurück in die Konfiguration. Der Kreis ist damit geschlossen. Offen sind das zweite Review-Gate für Wartbarkeit und die Hooks, die während des Bauens sofort prüfen.
+Was heute steht, trägt den ganzen Weg von der Idee bis zum Ende einer Bauphase und wieder zurück in die Konfiguration. Der Kreis ist damit geschlossen. Offen sind nur noch die Hooks, die während des Bauens nach jeder Änderung sofort prüfen; `execute-plan` verlässt sich darauf, dass ein Projekt sie selbst mitbringt.

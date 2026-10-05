@@ -12,10 +12,9 @@ lesen, ist eine Bitte; injizierter Inhalt liegt einfach da. Genau deshalb
 gibt es diesen Hook ueberhaupt.
 
 Der Fahrplan waechst. In der Aufbauphase ist er kurz; sobald die Bauphasen
-darin stehen, wird er lang - im Referenzprojekt, aus dem dieser Baukasten
-stammt, 65.000 Zeichen. Stumpfes Abschneiden waere hier der schlimmste
-Fehlermodus, weil abgeschnittener Inhalt in der Sitzung wie vollstaendiger
-aussieht. Deshalb wird ab dem Moment, in dem der Fahrplan eine aktuelle
+darin stehen, wird er lang - ausgewachsen leicht 60.000 Zeichen und mehr.
+Stumpfes Abschneiden waere hier der schlimmste Fehlermodus, weil
+abgeschnittener Inhalt in der Sitzung wie vollstaendiger aussieht. Deshalb wird ab dem Moment, in dem der Fahrplan eine aktuelle
 Bauphase nennt, in zwei Stuecken injiziert:
 
 1. der Kopf bis zum ersten Trenner, also Position und Regeln, und
@@ -93,7 +92,7 @@ def find_section(content, needle):
     """Den Abschnitt zurueckgeben, dessen Ueberschrift `needle` enthaelt.
 
     Verglichen wird kleingeschrieben und ohne Sternchen, damit die Marke
-    `Phase 4` auch auf `## 4. Phase 4 - Teams-Agent **im Bau**` passt. Der
+    `Phase 4` auch auf `## 4. Phase 4 - Datenmodell **im Bau**` passt. Der
     Abschnitt endet bei der naechsten Ueberschrift gleicher oder hoeherer
     Ebene, Unterabschnitte kommen also mit.
     """
@@ -182,7 +181,11 @@ def main() -> None:
         parts.append(
             "Beginne die Sitzung damit, wo wir stehen und was als Naechstes ansteht, "
             "und biete diesen Schritt an, statt auf eine Frage zu warten. Wer einen "
-            "Schritt abschliesst, traegt ihn im Fahrplan ein, bevor es weitergeht."
+            "Schritt abschliesst, traegt ihn im Fahrplan ein, bevor es weitergeht. "
+            "Bevor ein Skill aus diesem Ablauf laeuft, wird seine Zeile im Fahrplan "
+            "gelesen: steht die Voraussetzung dort noch offen, wird er nicht "
+            "ausgefuehrt, sondern der fehlende Schritt benannt und angeboten. Das "
+            "gilt auch, wenn nach dem Ergebnis gefragt wird statt nach dem Schritt."
         )
     else:
         parts.append(
