@@ -62,9 +62,9 @@ flowchart TD
     G --> H[execute-plan: Block je Worktree,<br/>bis zu drei parallel]
     H --> I[Hooks: Typen, Lint, Tests]
     I --> H
-    H --> HL[handlauf: Fläche im Browser]
-    HL --> J[Gates: review-changes +<br/>thermo-nuclear]
-    H --> J
+    H --> HL[handlauf: eigene Sitzung,<br/>kein Review-Input]
+    H --> J[Code-Gates: review-changes +<br/>thermo-nuclear]
+    HL --> K
     J --> K[Rückfluss: write-spec]
     K --> D
     J --> L[Wiederkehrende Muster in CLAUDE.md]
@@ -264,19 +264,23 @@ Parallel dazu die Sofortprüfung: Typprüfung und Linter laufen nach jedem Edit,
 
 ### 6. Abschluss-Gates
 
-**Skill:** `review-changes`
+**Skills:** `handlauf`, `review-changes`, `thermo-nuclear-code-quality-review`
 
 Am Ende eines Abschnitts, in fester Reihenfolge: Checkliste, Tests grün, **Handlauf** (wenn die Phase eine Oberfläche hat), Änderungsreview, Wartbarkeitsreview, Bericht.
 
 Der **`handlauf`** kommt vor den Code-Gates, weil er eine Frage beantwortet, die kein Test und kein Review beantworten kann: Wie ist es, das zu benutzen? Er geht mit dem Browser durch die gebaute Fläche, sieht sich jede Seite und jeden Zustand wirklich an, klickt die Hauptwege und die Randfälle, beobachtet dabei Server-Log, Konsole und Netzwerk, und prüft nach dem Speichern nach, ob es wirklich gespeichert ist — ein Erfolgs-Toast ist kein Beleg. Die Specs sind dabei Orientierung, keine Checkliste: Eine Seite kann jede Anforderung erfüllen und trotzdem schief, langsam oder verwirrend sein, und genau das soll auffallen. Reiner Bericht, Befunde nach Schwere, keine Fixes — ein Lauf, der zwischendurch repariert, prüft am Ende einen Stand, den niemand gebaut hat.
 
+**Er läuft in einer eigenen, frischen Sitzung und bekommt bewusst keinen Review-Input.** Keine Findings-Liste, kein Review-Bericht, kein Hinweis aus den Block-Reviews. Das sieht nach Verschwendung aus und ist das Gegenteil: Sein ganzer Wert liegt darin, der **erste** Blick zu sein. Wer gelesen hat, dass die Rechteprüfung im Handler in Ordnung ist, sucht die Rechteprüfung statt die Seite anzusehen; wer eine Liste mit neun Befunden mitbringt, bestätigt diese neun und übersieht den zehnten — die schiefe Spalte, die niemand notiert hat. Gelesen wird deshalb nur **Absicht**: Phasen-Plan, UI-Spec, Mockup, frühere Handlauf-Berichte. Ein Review ist dagegen schon ein Urteil, und genau das färbt ab. Die Befunde gehen an den Nutzer und in den Phasen-Plan, nicht in die Code-Gates.
+
 Das Änderungsreview misst **nicht** allgemeine Code-Ästhetik, sondern: Tut der Code, was die Spec sagt, auf die Art, wie dieses Projekt es sonst tut? Es lädt gezielt die Specs der geänderten Pfade und fächert in **drei Linsen** auf, jede mit einem eigenen Kopf: Sicherheit, Spec-Treue, Struktur. Drei Denkweisen; zusammengelegt kostet es Tiefe, weiter aufgeteilt fallen Findings durch die Ritzen.
 
 Zwei Regeln machen den Bericht belastbar. **Nachweis oder es zählt nicht:** zu jedem Finding der Pfad bis zum Schaden, der Gegenbeweis und ein Urteil. Und für die Spec-Linse die Nummer der verletzten Anforderung; ein Spec-Finding ohne Nummer ist eine Meinung. Dazu der **Gate-Abgleich** Punkt für Punkt, und ein Punkt, der ohne laufendes System nicht prüfbar ist, heißt „nicht prüfbar", nie „erfüllt".
 
-Das zweite Gate ist **`thermo-nuclear-code-quality-review`**, und es läuft über dieselben Änderungen. Es fragt nicht, ob der Code richtig ist, sondern ob er in sechs Monaten noch zu ändern ist. Sein Maßstab ist bewusst unbequem: Es sucht nicht nach lokalen Aufräumgelegenheiten, sondern nach dem Umbau, der ganze Verzweigungen, Schichten oder Sonderfälle **verschwinden** lässt, statt sie umzuverteilen. Feste Schwellen gehören dazu, etwa dass eine Datei durch eine Änderung nicht ohne starken Grund über tausend Zeilen wächst, und dass neue Sonderfall-Bedingungen in fremden Abläufen ein Entwurfsproblem sind, keine Stilfrage. Die Messlatte für ein „genehmigt" ist ausdrücklich **nicht**, dass es funktioniert.
+Das letzte Gate ist **`thermo-nuclear-code-quality-review`**, und es läuft über dieselben Änderungen wie das Änderungsreview. Es fragt nicht, ob der Code richtig ist, sondern ob er in sechs Monaten noch zu ändern ist. Sein Maßstab ist bewusst unbequem: Es sucht nicht nach lokalen Aufräumgelegenheiten, sondern nach dem Umbau, der ganze Verzweigungen, Schichten oder Sonderfälle **verschwinden** lässt, statt sie umzuverteilen. Feste Schwellen gehören dazu, etwa dass eine Datei durch eine Änderung nicht ohne starken Grund über tausend Zeilen wächst, und dass neue Sonderfall-Bedingungen in fremden Abläufen ein Entwurfsproblem sind, keine Stilfrage. Die Messlatte für ein „genehmigt" ist ausdrücklich **nicht**, dass es funktioniert.
 
-Die beiden Reviews sind **getrennte** Gates, und das ist der Punkt. „Richtig" und „wartbar" sind verschiedene Fragen; ein Lauf, der beide beantworten soll, beantwortet keine gründlich. Getrennte Gates halten die zweite Frage außerdem davon ab, gegen die erste wegpriorisiert zu werden — sie verliert sonst immer, weil ein Sicherheitsbefund dringender aussieht als eine wuchernde Datei.
+Damit sind es **drei getrennte** Gates, und das ist der Punkt. Der Handlauf fragt, ob es sich gut benutzen lässt, das Änderungsreview, ob der Code richtig ist, die Qualitätsprüfung, ob er wartbar bleibt. Drei Fragen, drei Köpfe, kein gemeinsamer Kontext.
+
+Die beiden Code-Reviews sind untereinander ebenfalls **getrennt**, aus demselben Grund. „Richtig" und „wartbar" sind verschiedene Fragen; ein Lauf, der beide beantworten soll, beantwortet keine gründlich. Getrennte Gates halten die zweite Frage außerdem davon ab, gegen die erste wegpriorisiert zu werden — sie verliert sonst immer, weil ein Sicherheitsbefund dringender aussieht als eine wuchernde Datei.
 
 Push erst nach ausdrücklicher Freigabe.
 
@@ -391,7 +395,7 @@ Ehrlich, weil ein Kreislauf mit Lücke kein Kreislauf ist.
 | `planning` | Plan je Phase, im Planungsmodus, vor dem Branch, mit Blöcken und Wellen | vorhanden |
 | `execute-plan` | Plan abarbeiten, Block je Worktree, bis zu drei parallel, ein Review je Block | vorhanden |
 | `testing` | Testdisziplin, Verify Red, Pflichtfälle aus dem Projekt abgeleitet | vorhanden |
-| `handlauf` | Fläche im Browser durchgehen, Befunde nach Schwere, reiner Bericht | vorhanden |
+| `handlauf` | Fläche im Browser durchgehen, eigene Sitzung ohne Review-Input, reiner Bericht | vorhanden |
 | `review-changes` | Code-Gate am Phasenende, drei Linsen, Gate-Abgleich, reiner Bericht | vorhanden |
 | `thermo-nuclear-code-quality-review` | Zweites, getrenntes Gate: Wartbarkeit statt Korrektheit | vorhanden |
 | Weitere Hooks | Sofortprüfung nach Edits | **fehlt** |

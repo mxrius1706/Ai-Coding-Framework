@@ -1,6 +1,6 @@
 ---
 name: handlauf
-description: "Walk a built phase through the real interface with a browser, with the eyes of a demanding user, and report what is wrong. Looks hard at every page (layout, alignment, consistency, spacing, overflow, states, feedback, speed, usability), clicks the happy paths and the edge cases, watches the dev server log, the console and the network while doing it, verifies that what looked saved really is, and writes a report with findings by severity. Report only, never fixes. Use it whenever a surface is to be checked in the browser - EN: manual test, smoke test, click through, UX review, walkthrough, e2e by hand, does it actually work, does it look right, sign off the pages; DE: Handlauf, durchklicken, im Browser testen, UI pruefen, funktional testen, sieht das gut aus, Seiten abnehmen, nach dem Fix nochmal alles pruefen. Also use it when a phase is built and the question is whether the interface works and looks right before the gate or after a round of fixes, even without the word handlauf. Not for automated tests (skill testing), not for code review (review-changes), not for designing a page (write-ui-spec)."
+description: "Walk a built phase through the real interface with a browser, with the eyes of a demanding user, and report what is wrong. Looks hard at every page (layout, alignment, consistency, spacing, overflow, states, feedback, speed, usability), clicks the happy paths and the edge cases, watches the dev server log, the console and the network while doing it, verifies that what looked saved really is, and writes a report with findings by severity. Report only, never fixes. Runs in a session of its own and deliberately takes no input from the code reviews, because its value is being the first look. Use it whenever a surface is to be checked in the browser - EN: manual test, smoke test, click through, UX review, walkthrough, e2e by hand, does it actually work, does it look right, sign off the pages; DE: Handlauf, durchklicken, im Browser testen, UI pruefen, funktional testen, sieht das gut aus, Seiten abnehmen, nach dem Fix nochmal alles pruefen. Also use it when a phase is built and the question is whether the interface works and looks right before the gate or after a round of fixes, even without the word handlauf. Not for automated tests (skill testing), not for code review (review-changes), not for designing a page (write-ui-spec)."
 ---
 
 # Handlauf - check the interface the way a user experiences it
@@ -18,6 +18,18 @@ The specs are **orientation, not a checklist**. They say what a page is for and 
 **The standard:** an attentive person seeing the page for the first time and expecting quality, plus a designer who notices alignment and rhythm. Whatever either would notice at first glance belongs in the report.
 
 **One tab, one step at a time.** No parallel subagents. The user is often working in the same browser and against the same dev server at the same time.
+
+## A clean session, and no review input
+
+**Run this in a session of its own**, started for this purpose. Not as a subagent of the gate chain, not in the session that built the phase, and not alongside the code reviews.
+
+**It takes no input from `review-changes`, `thermo-nuclear-code-quality-review` or the per-block reviews.** No findings list, no review report, no "watch out for X" from a reviewer. If one of those has already run, its output stays out of this brief.
+
+That is a deliberate restriction, and it is worth stating why, because it looks like waste. This pass judges layout, function and whether the interface makes sense at all - it is UX work, and its entire value is that it is a **first** look. A pass that has read "the permission check in the handler is fine" goes looking for the permission check instead of looking at the page. One that has read a list of nine findings spends its attention confirming those nine and stops noticing the tenth, which is the crooked column nobody wrote down. Primed eyes are no longer fresh eyes, and fresh is the only thing this pass has that the others do not.
+
+What it **does** read is intent, not judgement: the phase plan with its goal, gate and decisions, the page's UI spec, the mockup, and earlier walkthrough reports. Those say what the page is supposed to be. A review says what someone already thought about the code, and that is the part that contaminates.
+
+The findings go to the user and into the phase plan. The code reviews are not their audience either - they run on the same changes with their own heads, which is the point of having three gates instead of one.
 
 ## Phase 0 - understand, do not tick off
 

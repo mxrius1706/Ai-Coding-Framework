@@ -22,7 +22,7 @@ Der Ausgangspunkt ist eine Beobachtung. Ein Agent, der bei jeder Sitzung bei nul
 | `planning` | Plan je Bauphase, im Planungsmodus geschrieben, vor dem Branch, mit Blöcken, Wellen und Out of Scope |
 | `execute-plan` | Den freigegebenen Plan abarbeiten, Block für Block im eigenen Worktree, bis zu drei parallel |
 | `testing` | Testdisziplin. Zuerst der fehlschlagende Test, Verify Red ist Pflicht |
-| `handlauf` | Die gebaute Fläche im Browser durchklicken und ansehen, wie ein Nutzer sie erlebt. Reiner Bericht |
+| `handlauf` | Drittes Gate, vor den Code-Gates. Die gebaute Fläche im Browser ansehen und durchklicken, wie ein Nutzer sie erlebt. Eigene Sitzung, kein Review-Input, reiner Bericht |
 | `review-changes` | Erstes Code-Gate am Phasenende. Drei Linsen parallel, Gate-Abgleich, reiner Bericht |
 | `thermo-nuclear-code-quality-review` | Zweites Gate. Fragt nicht ob der Code richtig ist, sondern ob er wartbar bleibt |
 | `config-sync` | Die Konfiguration gegen ihre vier Autoritäten prüfen und die Drift nachziehen |

@@ -17,6 +17,8 @@ Work a released plan, wave by wave, block by block, each block in its own worktr
 
 **The phase gate is the exception:** `review-changes` and `thermo-nuclear-code-quality-review` at the end of the phase run on the **strong model** (`model: "opus"`). They are the net that makes the cheaper block review acceptable, and a net on the cheap model defeats the trade.
 
+The third gate, `handlauf`, is not dispatched from here at all: it runs in a session of its own and takes no input from this skill. See step 7.
+
 ## Branch model
 
 Three layers, fixed:
@@ -133,7 +135,9 @@ In the order blocks finish.
 
 ## Step 7: Close the plan
 
-All waves merged and green: hand over to the phase gate with the collected findings from the block reviews as context. The gate is the project's gate checklist, the full test suite, a pass through the interface where the phase has one (`handlauf`), then `review-changes` and `thermo-nuclear-code-quality-review`, then the report. Those gates keep their full depth and run on the strong model; they are what makes the lighter per-block review safe.
+All waves merged and green: hand over to the phase gate. It is the project's gate checklist, the full test suite, a walkthrough of the interface where the phase has one (`handlauf`), then `review-changes` and `thermo-nuclear-code-quality-review`, then the report. Those gates keep their full depth and run on the strong model; they are what makes the lighter per-block review safe.
+
+The collected findings from the block reviews go to **`review-changes` only**. `handlauf` gets none of them, and it is not started from this session: it runs clean, so that it looks at the interface rather than at a list somebody else wrote. Hand the user the branch and the surfaces to walk, and let them start it.
 
 Check that `.worktrees/` is empty and `git worktree list` shows only the main checkout.
 
