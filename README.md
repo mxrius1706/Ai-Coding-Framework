@@ -1,4 +1,6 @@
-# AI-Coding-Framework
+# agent-sdlc
+
+**A Claude Code toolkit for the whole lifecycle: product definition, specs, build phases, gates, and the configuration that corrects itself.**
 
 Ein Baukasten für die Arbeit mit Claude Code: Skills, die von der Produktidee bis zur laufend korrigierten Projektkonfiguration ineinandergreifen.
 
@@ -49,15 +51,15 @@ Alles liegt in `skills/`. Es dorthin zu kopieren, wo Claude Code nachschaut, ist
 **macOS und Linux:**
 
 ```bash
-git clone https://github.com/mxrius1706/Ai-Coding-Framework.git
-cp -r Ai-Coding-Framework/skills/* ~/.claude/skills/
+git clone https://github.com/mxrius1706/agent-sdlc.git
+cp -r agent-sdlc/skills/* ~/.claude/skills/
 ```
 
 **Windows, PowerShell:**
 
 ```powershell
-git clone https://github.com/mxrius1706/Ai-Coding-Framework.git
-Copy-Item -Recurse -Force Ai-Coding-Framework\skills\* $HOME\.claude\skills\
+git clone https://github.com/mxrius1706/agent-sdlc.git
+Copy-Item -Recurse -Force agent-sdlc\skills\* $HOME\.claude\skills\
 ```
 
 Damit gilt es in jedem Projekt. Soll es nur für eines gelten, geht es nach `.claude/skills/` in dessen Ordner statt nach `~/.claude/skills/`.
