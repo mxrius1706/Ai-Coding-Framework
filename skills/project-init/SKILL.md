@@ -276,12 +276,18 @@ Path routing needs no table. A rule with `paths:` frontmatter is loaded by the t
 
 **Phrase routing** does need writing down: a table in the root file mapping what the user actually says to the skill that should run. Use the phrases they really use, in every language they work in. This is the only routing table, and it lives in the root file alone. Routing kept in two places drifts apart, and then the wrong one gets followed.
 
-Give it a third column: the roadmap step the skill belongs to. Two columns answer *which skill*; the third is what makes the next rule cheap to obey, because the number is what gets looked up.
+Give it a third column: where the skill sits in the roadmap. Two columns answer *which skill*; the third is what makes the next rule cheap to obey, because it is what gets looked up. Skills of the per-phase ritual have no step number - they repeat every phase - so they carry their position in the ritual instead.
 
-| Was der Nutzer sagt | Skill | Schritt im Fahrplan |
+| Was der Nutzer sagt | Skill | Fahrplan |
 |---|---|---|
-| „Komponenten schneiden", „Specs anlegen" | `create-specs` | 6 |
-| „Schreib die Spec für X", „X spezifizieren" | `write-spec` | 7 |
+| „Komponenten schneiden", „Specs anlegen" | `create-specs` | Schritt 6 |
+| „Schreib die Spec für X", „X spezifizieren" | `write-spec` | Schritt 7 |
+| „Lass uns Phase 4 bauen", „den Plan abarbeiten" | `execute-plan` | Ritual, nach Freigabe |
+| „Klick das mal durch", „sieht das gut aus" | `handlauf` | Ritual, Gate |
+
+**Which skills earn a row.** Not all of them, or the table becomes a directory nobody reads. The test: **a skill earns a row when the natural way of asking for it does not contain its name.** "Write the PRD" names its skill and needs no row. "Does this actually work?" is `handlauf`, and without a row it is reachable only through the skill's own description - which is the layer this table exists to reinforce in the first place.
+
+Two things follow from that test, and both are easy to miss. The skills of the **per-phase ritual** earn rows as much as the setup ones, and are forgotten more often: a setup skill runs once, while the ritual runs on every phase for the life of the project. And the test keeps the table correct as the toolkit changes, which a fixed list of skills would not - the installed skills are the truth about what exists, and a list copied into this file starts drifting the first time one is added.
 
 Where a phrase must always trigger its skill, a `UserPromptSubmit` hook can enforce it. The table then documents what the hook does rather than hoping the model reads it.
 
@@ -289,7 +295,7 @@ Where a phrase must always trigger its skill, a `UserPromptSubmit` hook can enfo
 
 So one rule goes into the root file next to the table, and the wording matters more than its length:
 
-> Bevor ein Skill aus diesem Ablauf läuft, wird seine Zeile im Fahrplan gelesen. Steht die Voraussetzung dort noch offen, wird der Skill **nicht** ausgeführt: der fehlende Schritt wird benannt und angeboten. Das gilt auch, wenn nach dem Ergebnis gefragt wird statt nach dem Schritt — „schreib die Spec für X" ist ein Aufruf von Schritt 7.
+> Bevor ein Skill aus diesem Ablauf läuft, wird seine Zeile im Fahrplan gelesen. Steht die Voraussetzung dort noch offen, wird der Skill **nicht** ausgeführt: der fehlende Schritt wird benannt und angeboten. Das gilt auch, wenn nach dem Ergebnis gefragt wird statt nach dem Schritt — „schreib die Spec für X" ist ein Aufruf von Schritt 7. Bei den Skills des Rituals ist die Voraussetzung ihre Stelle im Ritual statt eine Schrittnummer: `handlauf` läuft nach dem Bauen, nicht während.
 
 Four things make that hold rather than decorate the file.
 
